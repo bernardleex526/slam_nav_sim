@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>robot_interface_spec</name>
+  <version>0.1.0</version>
+  <description>
+    机器人仿真接口规范：统一 frame / 话题 / 参数契约。所有机器人模型与算法适配层
+    都必须 conform 本规范，以保证仿真环境中可任意替换机器人与算法。
+  </description>
+  <maintainer email="bernard@todo.todo">Bernard</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

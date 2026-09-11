@@ -1,0 +1,42 @@
+{
+  "dynamic_obstacles": 2,
+  "description": "多房间 + 走廊 + 1.2m 门洞 + 家具 + 2 个动态障碍",
+  "expected_failure_modes": [
+    "门洞处的回环检测",
+    "重定位鲁棒性",
+    "动态障碍造成的 map 污染"
+  ],
+  "landmarks": 13,
+  "name": "medium",
+  "resolution": 0.1,
+  "wall_height": 1.5,
+  "width_m": 30.0,
+  "height_m": 24.0,
+  "grid_nx": 300,
+  "grid_ny": 240,
+  "origin": [
+    -15.0,
+    -12.0,
+    0.0
+  ],
+  "wall_boxes": 25,
+  "free_area_ratio": 0.9352,
+  "connectivity_from_spawn": 1.0,
+  "recommended_spawn": {
+    "x": -13.0,
+    "y": -10.5,
+    "yaw": 0.0
+  },
+  "dynamic_obstacle_poses": [
+    {
+      "x": -8.958,
+      "y": 6.32
+    },
+    {
+      "x": 12.194,
+      "y": -6.648
+    }
+  ],
+  "gt_map_pgm": "medium.pgm",
+  "gt_map_yaml": "medium.yaml"
+}

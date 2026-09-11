@@ -1,0 +1,68 @@
+# 局部规划器：TEB（Timed Elastic Band）
+# 把路径当成弹性带做时空联合优化，天然处理运动学约束和动态障碍。
+#
+# 重要：TEB 不在 Nav2 官方发行版里，需要单独编译 nav2 分支的 teb_local_planner。
+#       没装的话这个 fragment 一用就会报 "Failed to create controller"。
+#       所以它默认是"可选进阶项"，不是开箱可用项。
+controller_server:
+  ros__parameters:
+        # ⚠️ 插件 ID 必须叫 FollowPath —— Nav2 默认行为树把它硬编码在
+    # ControllerSelector 的 default_controller 上。用 FollowPathMPPI 之类的
+    # 名字会让 BT 找不到控制器，表现为目标一直被 abort 但没有明显报错。
+    controller_plugins: ["FollowPath"]
+    FollowPath:
+      plugin: "teb_local_planner::TebLocalPlannerROS"
+      teb_autosize: 1.0
+      dt_ref: 0.3
+      dt_hysteresis: 0.1
+      max_samples: 500
+      global_plan_overwrite_orientation: true
+      allow_init_with_backwards_motion: false
+      max_global_plan_lookahead_dist: 3.0
+      global_plan_viapoint_sep: -1.0
+      global_plan_prune_distance: 1.0
+      exact_arc_length: false
+      feasibility_check_no_poses: 2
+      publish_feedback: false
+      min_samples: 3
+      max_vel_x: 1.0
+      max_vel_x_backwards: 0.2
+      max_vel_theta: 2.0
+      acc_lim_x: 2.0
+      acc_lim_theta: 3.0
+      min_turning_radius: 0.0          # 0 = 支持原地旋转（轮足/四足合适）
+      wheelbase: 0.56
+      cmd_angle_instead_rotvel: false
+      footprint_model:
+        type: "polygon"
+        vertices: "[[0.48,0.30],[0.48,-0.30],[-0.48,-0.30],[-0.48,0.30]]"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.30
+      free_goal_vel: false
+      complete_global_plan: true
+      min_obstacle_dist: 0.30
+      inflation_dist: 0.45
+      include_costmap_obstacles: true
+      costmap_obstacles_behind_robot_dist: 1.5
+      obstacle_poses_affected: 15
+      dynamic_obstacles:
+        enabled: false
+      no_inner_iterations: 5
+      no_outer_iterations: 4
+      optimization_activate: true
+      optimization_verbose: false
+      penalty_epsilon: 0.1
+      weight_max_vel_x: 2.0
+      weight_max_vel_theta: 1.0
+      weight_acc_lim_x: 1.0
+      weight_acc_lim_theta: 1.0
+      weight_kinematics_nh: 1000.0
+      weight_kinematics_forward_drive: 1.0
+      weight_kinematics_turning_radius: 1.0
+      weight_optimaltime: 1.0
+      weight_shortest_path: 0.0
+      weight_obstacle: 50.0
+      weight_inflation: 0.1
+      weight_dynamic_obstacle: 10.0
+      weight_viapoint: 1.0
+      weight_adapt_factor: 2.0

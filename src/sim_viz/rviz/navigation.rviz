@@ -1,0 +1,219 @@
+# 由 sim_viz/tools/gen_rviz_configs.py 生成，请勿手工编辑。
+# 想改显示项，改生成器里的 CONFIGS，然后重跑脚本。
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Selection
+    Name: Selection
+  - Class: rviz_common/Tool Properties
+    Name: Tool Properties
+  - Class: rviz_common/Views
+    Name: Views
+'Visualization Manager':
+  Class: ''
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Alpha: 0.3
+      'Cell Size': 1.0
+      Color: '120; 120; 120'
+      'Line Style':
+        'Line Width': 0.03
+        Value: Lines
+      Plane: XY
+      'Plane Cell Count': 40
+      'Reference Frame': '<Fixed Frame>'
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: false
+      'Show Arrows': true
+      'Show Axes': true
+      'Show Names': false
+      'Marker Scale': 0.4
+      'Frame Timeout': 15
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Enabled: true
+      'Description Topic':
+        Value: /robot_description
+      'Visual Enabled': true
+      'Collision Enabled': false
+      Alpha: 1.0
+    - Class: rviz_default_plugins/LaserScan
+      Name: 'Scan (虚拟 2D)'
+      Enabled: true
+      Topic:
+        Value: /scan
+        Depth: 5
+      Color: '255; 255; 120'
+      'Size (m)': 0.06
+      Style: Points
+      Alpha: 0.8
+      'Position Transformer': XYZ
+    - Class: rviz_default_plugins/Map
+      Name: 2D 地图 /map
+      Enabled: true
+      Topic:
+        Value: /map
+        Depth: 5
+        'Durability Policy': Transient Local
+      Alpha: 0.7
+      'Color Scheme': map
+      'Draw Behind': false
+      'Use Timestamp': false
+    - Class: rviz_default_plugins/PointCloud2
+      Name: 3D 地图点云 /map_cloud
+      Enabled: true
+      Topic:
+        Value: /map_cloud
+        Depth: 5
+      Alpha: 0.9
+      'Size (m)': 0.03
+      'Size (Pixels)': 3
+      Style: Flat Squares
+      'Position Transformer': XYZ
+      'Decay Time': 0
+      'Color Transformer': AxisColor
+      'Use Fixed Frame': false
+      Selectable: false
+    - Class: rviz_default_plugins/PointCloud2
+      Name: 3D 地图降采样 /map_cloud_downsampled
+      Enabled: true
+      Topic:
+        Value: /map_cloud_downsampled
+        Depth: 5
+      Alpha: 1.0
+      'Size (m)': 0.06
+      'Size (Pixels)': 3
+      Style: Flat Squares
+      'Position Transformer': XYZ
+      'Decay Time': 0
+      'Color Transformer': FlatColor
+      'Use Fixed Frame': false
+      Selectable: false
+      AxisColor: Z
+      Color: '200; 200; 200'
+    - Class: rviz_default_plugins/Map
+      Name: 全局代价地图
+      Enabled: false
+      Topic:
+        Value: /global_costmap/costmap
+        Depth: 5
+        'Durability Policy': Transient Local
+      Alpha: 0.5
+      'Color Scheme': costmap
+      'Draw Behind': false
+      'Use Timestamp': false
+    - Class: rviz_default_plugins/Map
+      Name: 局部代价地图
+      Enabled: true
+      Topic:
+        Value: /local_costmap/costmap
+        Depth: 5
+        'Durability Policy': Transient Local
+      Alpha: 0.6
+      'Color Scheme': costmap
+      'Draw Behind': false
+      'Use Timestamp': false
+    - Class: rviz_default_plugins/Map
+      Name: '全局代价地图(膨胀)'
+      Enabled: false
+      Topic:
+        Value: /global_costmap/costmap_raw
+        Depth: 5
+        'Durability Policy': Transient Local
+      Alpha: 0.35
+      'Color Scheme': costmap
+      'Draw Behind': false
+      'Use Timestamp': false
+    - Class: rviz_default_plugins/Map
+      Name: '局部代价地图(膨胀)'
+      Enabled: false
+      Topic:
+        Value: /local_costmap/costmap_raw
+        Depth: 5
+        'Durability Policy': Transient Local
+      Alpha: 0.45
+      'Color Scheme': costmap
+      'Draw Behind': false
+      'Use Timestamp': false
+    - Class: rviz_default_plugins/Path
+      Name: 全局路径 /plan
+      Enabled: true
+      Topic:
+        Value: /plan
+        Depth: 5
+      Alpha: 1.0
+      Color: '60; 220; 120'
+      'Head Diameter': 0.2
+      'Head Length': 0.2
+      'Line Style': Lines
+      'Line Width': 0.06
+      'Pose Style': None
+      Radius: 0.03
+      'Shaft Diameter': 0.1
+      'Shaft Length': 0.1
+    - Class: rviz_default_plugins/Path
+      Name: 局部路径 /local_plan
+      Enabled: true
+      Topic:
+        Value: /local_plan
+        Depth: 5
+      Alpha: 1.0
+      Color: '250; 200; 60'
+      'Head Diameter': 0.2
+      'Head Length': 0.2
+      'Line Style': Lines
+      'Line Width': 0.05
+      'Pose Style': None
+      Radius: 0.03
+      'Shaft Diameter': 0.1
+      'Shaft Length': 0.1
+    - Class: rviz_default_plugins/Polygon
+      Name: Footprint
+      Enabled: true
+      Topic:
+        Value: /local_costmap/published_footprint
+        Depth: 5
+      Alpha: 0.5
+      Color: '255; 80; 255'
+    - Class: rviz_default_plugins/MarkerArray
+      Name: 导航目标 /waypoint_markers
+      Enabled: true
+      Topic:
+        Value: /waypoint_markers
+        Depth: 5
+  'Global Options':
+    'Background Color': '38; 40; 44'
+    'Fixed Frame': map
+    'Frame Rate': 30
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/SetInitialPose
+      Topic:
+        Value: /initialpose
+    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Value: /goal_pose
+    - Class: rviz_default_plugins/PublishPoint
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 22.0
+      'Focal Point':
+        X: 0.0
+        Y: 0.0
+        Z: 0.0
+      Name: Current View
+      Pitch: 1.2
+      Yaw: 0.0
+      'Target Frame': '<Fixed Frame>'
+    Saved: ~
+'Window Geometry':
+  Height: 900
+  Width: 1500
+  X: 60
+  Y: 60

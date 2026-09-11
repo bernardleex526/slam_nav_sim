@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- =========================================================================
+       通用视觉材质。只用于仿真显示，不影响物理。
+       ========================================================================= -->
+
+  <material name="sim_dark_grey">
+    <color rgba="0.20 0.21 0.23 1.0"/>
+  </material>
+  <material name="sim_light_grey">
+    <color rgba="0.72 0.73 0.75 1.0"/>
+  </material>
+  <material name="sim_accent">
+    <color rgba="0.85 0.45 0.10 1.0"/>
+  </material>
+  <material name="sim_metal">
+    <color rgba="0.55 0.57 0.60 1.0"/>
+  </material>
+  <material name="sim_sensor_black">
+    <color rgba="0.08 0.08 0.09 1.0"/>
+  </material>
+
+  <!-- =========================================================================
+       惯量工具宏
+       ========================================================================= -->
+
+  <!-- 长方体惯量
+
+       注意：尺寸必须拆成三个标量参数，不能传 "0.7 0.3 0.2" 这样的空格分隔串。
+       xacro 的表达式求值是"文本替换 + eval"，字符串不会变成数组：
+         size="0.7 0.3 0.2"  ->  size[1] 取到的是字符 ' '，size[1]*size[1] 直接抛
+         TypeError: can't multiply sequence by non-int of type 'str'
+       而单个数字字符串能工作，是因为 '0.7' * '0.7' 在 eval 里会被当数字。
+       这个坑非常隐蔽 —— 单看宏调用完全看不出问题。 -->
+  <xacro:macro name="sim_box_inertia" params="mass size_x size_y size_z">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="${mass * (size_y*size_y + size_z*size_z) / 12.0}"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="${mass * (size_x*size_x + size_z*size_z) / 12.0}"
+        iyz="0.0"
+        izz="${mass * (size_x*size_x + size_y*size_y) / 12.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- 圆柱惯量，轴沿 z（rpy 旋转到其他轴） -->
+  <xacro:macro name="sim_cylinder_inertia" params="mass radius length">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="${mass * (3.0*radius*radius + length*length) / 12.0}"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="${mass * (3.0*radius*radius + length*length) / 12.0}"
+        iyz="0.0"
+        izz="${mass * radius * radius / 2.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- 球惯量 -->
+  <xacro:macro name="sim_sphere_inertia" params="mass radius">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="${2.0 * mass * radius * radius / 5.0}"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="${2.0 * mass * radius * radius / 5.0}"
+        iyz="0.0"
+        izz="${2.0 * mass * radius * radius / 5.0}"/>
+    </inertial>
+  </xacro:macro>
+
+</robot>

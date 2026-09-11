@@ -1,0 +1,15 @@
+runner:
+  lane_spacing: 1.2
+  explore_speed: 0.5
+  clearance: 0.45
+  max_explore_duration: 6000
+  warmup: 15.0
+  startup_timeout: 150
+  cooldown: 4
+  headless: true
+  crop_map: false
+  output_dir: "~/.ros/sim_delivery_stage_a"
+experiments:
+  - {name: delivery_simple, robot: wheeled_quadruped, world: simple, mapping: slam_toolbox, use_gimbal: false}
+  - {name: delivery_medium, robot: wheeled_quadruped, world: medium, mapping: slam_toolbox, use_gimbal: false}
+  - {name: delivery_complex, robot: wheeled_quadruped, world: complex, mapping: slam_toolbox, use_gimbal: false}

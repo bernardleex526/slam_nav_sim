@@ -1,0 +1,130 @@
+# =============================================================================
+# 批量评测矩阵
+# -----------------------------------------------------------------------------
+# 定义"要跑哪些组合、每个组合跑几遍"。
+#
+# 为什么要跑多遍：仿真本身有随机性（动态障碍的相位、起点的微小差异），
+# 单次结果可能因为一次倒霉的卡门就判定某算法失败。跑 3~5 遍取统计量，
+# 结论才站得住。这是需求 #4「方便进行对比」的最后一环。
+# =============================================================================
+
+runner:
+  goals_per_run: 4            # 每次运行发几个导航目标
+  goal_timeout: 180.0         # 单个目标超时（秒）
+  startup_timeout: 120.0      # 等仿真+导航栈就绪的超时
+  cooldown: 8.0               # 两次实验之间的间隔，让 Gazebo 完全退出
+  headless: true              # 批量跑必须无头，否则渲染开销会让 RTF 崩掉
+  save_final_map: true        # 结束时保存地图，用于和 GT 对比
+  output_dir: "~/.ros/sim_benchmark"
+
+# ---------------------------------------------------------------------------
+# 要跑的实验列表。每项只写"变量"，其余走默认。
+# ---------------------------------------------------------------------------
+experiments:
+
+  # ---- 组 1：同一机器人、同一地图，比较规划器组合 ----
+  - name: wq_simple_smac_dwb
+    robot: wheeled_quadruped
+    world: simple
+    mapping: slam_toolbox
+    global_planner: smac_2d
+    local_planner: dwb
+    repeats: 3
+
+  - name: wq_simple_smac_mppi
+    robot: wheeled_quadruped
+    world: simple
+    mapping: slam_toolbox
+    global_planner: smac_2d
+    local_planner: mppi
+    repeats: 3
+
+  - name: wq_simple_hybrid_rpp
+    robot: wheeled_quadruped
+    world: simple
+    mapping: slam_toolbox
+    global_planner: smac_hybrid
+    local_planner: rpp
+    repeats: 3
+
+  # ---- 组 2：换难度，看规划器的泛化性 ----
+  - name: wq_medium_smac_dwb
+    robot: wheeled_quadruped
+    world: medium
+    mapping: slam_toolbox
+    global_planner: smac_2d
+    local_planner: dwb
+    repeats: 3
+
+  - name: wq_complex_smac_dwb
+    robot: wheeled_quadruped
+    world: complex
+    mapping: slam_toolbox
+    global_planner: smac_2d
+    local_planner: dwb
+    repeats: 3
+
+  - name: wq_complex_hybrid_mppi
+    robot: wheeled_quadruped
+    world: complex
+    mapping: slam_toolbox
+    global_planner: smac_hybrid
+    local_planner: mppi
+    repeats: 3
+
+  # ---- 组 3：换机器人，验证"接口规范 + 参数适配"是否成立 ----
+  - name: qd_medium_smac_dwb
+    robot: quadruped
+    world: medium
+    mapping: slam_toolbox
+    global_planner: smac_2d
+    local_planner: dwb
+    repeats: 3
+
+  # ---- 组 4：换建图算法（先跑通 fast_lio 再打开这一段）----
+  # - name: wq_medium_fastlio_smac_dwb
+  #   robot: wheeled_quadruped
+  #   world: medium
+  #   mapping: fast_lio
+  #   global_planner: smac_2d
+  #   local_planner: dwb
+  #   repeats: 3
+
+  # ---- 组 5：稳定云台消融实验（量化抖动对建图的影响）----
+  # - name: wq_medium_no_gimbal
+  #   robot: wheeled_quadruped
+  #   world: medium
+  #   mapping: fast_lio
+  #   global_planner: smac_2d
+  #   local_planner: dwb
+  #   use_gimbal: false
+  #   repeats: 3
+
+# ---------------------------------------------------------------------------
+# 汇总口径：哪些指标进报告表，以及"好"的方向
+# ---------------------------------------------------------------------------
+summary_metrics:
+  - key: success_rate
+    higher_is_better: true
+    label: 成功率
+  - key: coverage_ratio
+    higher_is_better: true
+    label: 建图覆盖率
+  - key: occupied_iou
+    higher_is_better: true
+    label: 占据 IoU
+  - key: grid_accuracy
+    higher_is_better: true
+    label: 栅格一致率
+  - key: ate_rmse_aligned
+    higher_is_better: false
+    label: ATE RMSE(m)
+  - key: time_to_goal_mean
+    higher_is_better: false
+    label: 平均耗时(s)
+  - key: tracking_error_rmse
+    higher_is_better: false
+    label: 跟踪误差(m)
+  - key: collision_count
+    higher_is_better: false
+    label: 碰撞次数

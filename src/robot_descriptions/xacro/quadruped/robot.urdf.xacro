@@ -1,0 +1,230 @@
+<?xml version="1.0"?>
+<robot name="sim_quadruped" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- =========================================================================
+       足式机器狗参数化模板
+       =========================================================================
+       对标平台：Unitree Go2 / M20 等 12 DOF 四足
+       每腿 3 DOF：髋（roll, abduction） + 大腿（pitch） + 小腿（pitch） + 足端（fixed）
+       共 12 DOF。
+
+       关于腿式平台的建图测试要点：
+         抬腿行走会造成躯干俯仰抖动，直接污染雷达点云。本模板默认用 planar_move
+         驱动（腿静止），所以不会自动产生抖动 —— 这是有意的：先把"建图/导航
+         算法本身"测干净，再单独引入运动学扰动做变量隔离。
+         要测抖动影响，请开启 use_gimbal 的对照组（关掉云台补偿）。
+       ========================================================================= -->
+
+  <!-- ======================== 参数入口 ======================== -->
+  <xacro:arg name="robot_name"        default="quadruped"/>
+  <xacro:arg name="body_x"            default="0.66"/>
+  <xacro:arg name="body_y"            default="0.30"/>
+  <xacro:arg name="body_z"            default="0.18"/>
+  <xacro:arg name="body_mass"         default="11.0"/>
+  <xacro:arg name="hip_x"             default="0.26"/>
+  <xacro:arg name="hip_y"             default="0.15"/>
+  <xacro:arg name="thigh_len"         default="0.22"/>
+  <xacro:arg name="shin_len"          default="0.22"/>
+  <xacro:arg name="foot_radius"       default="0.025"/>
+  <xacro:arg name="sensor_profile"    default="mid360_imu_cam"/>
+  <xacro:arg name="use_gimbal"        default="true"/>
+  <xacro:arg name="odom_source"       default="gt"/>
+  <xacro:arg name="lidar_xyz"         default="0.16 0.0 0.14"/>
+  <xacro:arg name="lidar_rpy"         default="0.0 0.0 0.0"/>
+  <xacro:arg name="camera_xyz"        default="0.32 0.0 0.05"/>
+  <xacro:arg name="camera_rpy"        default="0.0 0.0 0.0"/>
+  <xacro:arg name="imu_xyz"           default="0.16 0.0 0.14"/>
+  <xacro:arg name="imu_rpy"           default="0.0 0.0 0.0"/>
+
+  <xacro:include filename="$(find robot_descriptions)/xacro/common/materials.xacro"/>
+  <xacro:include filename="$(find robot_descriptions)/xacro/common/sensors.xacro"/>
+  <xacro:include filename="$(find robot_descriptions)/xacro/common/gazebo_control.xacro"/>
+
+  <!-- ======================== 派生量 ======================== -->
+  <xacro:property name="body_x_"       value="$(arg body_x)"/>
+  <xacro:property name="body_y_"       value="$(arg body_y)"/>
+  <xacro:property name="body_z_"       value="$(arg body_z)"/>
+  <xacro:property name="body_mass_"    value="$(arg body_mass)"/>
+  <xacro:property name="hip_x_"        value="$(arg hip_x)"/>
+  <xacro:property name="hip_y_"        value="$(arg hip_y)"/>
+  <xacro:property name="thigh_len_"    value="$(arg thigh_len)"/>
+  <xacro:property name="shin_len_"     value="$(arg shin_len)"/>
+  <xacro:property name="foot_radius_"  value="$(arg foot_radius)"/>
+  <xacro:property name="profile_"      value="$(arg sensor_profile)"/>
+  <xacro:property name="use_gimbal_"   value="$(arg use_gimbal)"/>
+  <xacro:property name="odom_source_"  value="$(arg odom_source)"/>
+
+  <xacro:property name="stand_height_"
+    value="${foot_radius_ + shin_len_ + thigh_len_ + body_z_/2.0}"/>
+
+  <!-- 点云消息的 frame：启用云台则走 lidar_stabilized（节点动态发布）
+       不能写成 use_gimbal_ == 'true' —— xacro 会把 "true"/"false" 自动转成
+       Python 布尔，比较恒为 False，云台会静默失效。详见 wheeled_quadruped 同名注释。 -->
+  <xacro:property name="lidar_msg_frame_" value="${'lidar_stabilized' if use_gimbal_ else ''}"/>
+
+  <!-- ======================== 基础链路 ======================== -->
+  <link name="base_footprint"/>
+
+  <link name="base_link">
+    <xacro:sim_box_inertia mass="${body_mass_}" size_x="${body_x_}" size_y="${body_y_}" size_z="${body_z_}"/>
+    <visual>
+      <geometry><box size="${body_x_} ${body_y_} ${body_z_}"/></geometry>
+      <material name="sim_light_grey"/>
+    </visual>
+    <collision>
+      <geometry><box size="${body_x_} ${body_y_} ${body_z_}"/></geometry>
+    </collision>
+  </link>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${stand_height_}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="heading_marker">
+    <xacro:sim_box_inertia mass="0.05" size_x="0.08" size_y="0.12" size_z="0.04"/>
+    <visual>
+      <geometry><box size="0.08 0.12 0.04"/></geometry>
+      <material name="sim_accent"/>
+    </visual>
+  </link>
+  <joint name="heading_marker_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="heading_marker"/>
+    <origin xyz="${body_x_/2.0 - 0.04} 0 ${body_z_/2.0 + 0.02}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ======================== 腿：宏 ======================== -->
+  <xacro:macro name="q_leg" params="p fx fy">
+    <!-- 髋（abduction） -->
+    <link name="${p}_hip_link">
+      <xacro:sim_cylinder_inertia mass="0.42" radius="0.035" length="0.06"/>
+      <visual>
+        <geometry><cylinder radius="0.035" length="0.06"/></geometry>
+        <origin xyz="0 0 0" rpy="1.5707963 0 0"/>
+        <material name="sim_dark_grey"/>
+      </visual>
+      <collision>
+        <geometry><cylinder radius="0.035" length="0.06"/></geometry>
+        <origin xyz="0 0 0" rpy="1.5707963 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${p}_hip_joint" type="revolute">
+      <parent link="base_link"/>
+      <child link="${p}_hip_link"/>
+      <origin xyz="${fx * hip_x_} ${fy * hip_y_} 0" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit lower="-0.50" upper="0.50" effort="40.0" velocity="20.0"/>
+      <dynamics damping="0.8" friction="0.2"/>
+    </joint>
+
+    <!-- 大腿 -->
+    <link name="${p}_thigh_link">
+      <inertial>
+        <mass value="0.90"/>
+        <origin xyz="0 0 ${-thigh_len_/2.0}" rpy="0 0 0"/>
+        <inertia ixx="0.0036" ixy="0" ixz="0" iyy="0.0036" iyz="0" izz="0.0002"/>
+      </inertial>
+      <visual>
+        <geometry><box size="0.055 0.045 ${thigh_len_}"/></geometry>
+        <origin xyz="0 0 ${-thigh_len_/2.0}" rpy="0 0 0"/>
+        <material name="sim_dark_grey"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.055 0.045 ${thigh_len_}"/></geometry>
+        <origin xyz="0 0 ${-thigh_len_/2.0}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${p}_thigh_joint" type="revolute">
+      <parent link="${p}_hip_link"/>
+      <child link="${p}_thigh_link"/>
+      <origin xyz="0 ${fy * 0.045} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-1.20" upper="2.20" effort="40.0" velocity="20.0"/>
+      <dynamics damping="0.8" friction="0.2"/>
+    </joint>
+
+    <!-- 小腿 -->
+    <link name="${p}_shin_link">
+      <inertial>
+        <mass value="0.28"/>
+        <origin xyz="0 0 ${-shin_len_/2.0}" rpy="0 0 0"/>
+        <inertia ixx="0.0011" ixy="0" ixz="0" iyy="0.0011" iyz="0" izz="0.00004"/>
+      </inertial>
+      <visual>
+        <geometry><box size="0.032 0.026 ${shin_len_}"/></geometry>
+        <origin xyz="0 0 ${-shin_len_/2.0}" rpy="0 0 0"/>
+        <material name="sim_metal"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.032 0.026 ${shin_len_}"/></geometry>
+        <origin xyz="0 0 ${-shin_len_/2.0}" rpy="0 0 0"/>
+      </collision>
+    </link>
+
+    <joint name="${p}_shin_joint" type="revolute">
+      <parent link="${p}_thigh_link"/>
+      <child link="${p}_shin_link"/>
+      <origin xyz="0 0 ${-thigh_len_}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-2.60" upper="-0.30" effort="30.0" velocity="20.0"/>
+      <dynamics damping="0.5" friction="0.1"/>
+    </joint>
+
+    <!-- 足端（球形，接触用） -->
+    <link name="${p}_foot_link">
+      <xacro:sim_sphere_inertia mass="0.06" radius="${foot_radius_}"/>
+      <visual>
+        <geometry><sphere radius="${foot_radius_}"/></geometry>
+        <material name="sim_sensor_black"/>
+      </visual>
+      <collision>
+        <geometry><sphere radius="${foot_radius_}"/></geometry>
+      </collision>
+    </link>
+
+    <joint name="${p}_foot_joint" type="fixed">
+      <parent link="${p}_shin_link"/>
+      <child link="${p}_foot_link"/>
+      <origin xyz="0 0 ${-shin_len_}" rpy="0 0 0"/>
+    </joint>
+
+    <gazebo reference="${p}_foot_link">
+      <mu1>1.0</mu1>
+      <mu2>1.0</mu2>
+      <kp>1000000.0</kp>
+      <kd>100.0</kd>
+      <minDepth>0.001</minDepth>
+      <selfCollide>false</selfCollide>
+      <material>Gazebo/Black</material>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- ======================== 四条腿实例 ======================== -->
+  <xacro:q_leg p="FL" fx="1"  fy="1"/>
+  <xacro:q_leg p="FR" fx="1"  fy="-1"/>
+  <xacro:q_leg p="RL" fx="-1" fy="1"/>
+  <xacro:q_leg p="RR" fx="-1" fy="-1"/>
+
+  <!-- ======================== 传感器 ======================== -->
+  <xacro:sim_sensor_suite
+    profile="${profile_}"
+    lidar_parent="base_link"
+    lidar_frame="lidar_link"
+    lidar_msg_frame="${lidar_msg_frame_}"
+    lidar_xyz="$(arg lidar_xyz)"
+    lidar_rpy="$(arg lidar_rpy)"
+    camera_xyz="$(arg camera_xyz)"
+    camera_rpy="$(arg camera_rpy)"
+    imu_xyz="$(arg imu_xyz)"
+    imu_rpy="$(arg imu_rpy)"/>
+
+  <!-- ======================== Gazebo 插件 ======================== -->
+  <!-- 运动学模式：关重力、冻结 z（否则 z 会在下塌与弹回之间反复跳，见宏注释） -->
+  <xacro:sim_kinematic_freeze link_name="base_footprint"/>
+  <xacro:sim_planar_move odom_source="${odom_source_}"/>
+  <xacro:sim_ground_truth_odom/>
+
+</robot>

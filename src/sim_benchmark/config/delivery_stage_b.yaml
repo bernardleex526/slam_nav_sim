@@ -1,0 +1,26 @@
+runner:
+  goals_per_run: 5
+  goal_timeout: 150
+  startup_timeout: 150
+  amcl_settle: 10.0
+  cooldown: 4
+  headless: true
+  goal_seed: 1000
+  rmw_implementation: rmw_cyclonedds_cpp
+  output_dir: "~/.ros/sim_delivery_stage_b"
+  stage_a_selected: "~/.ros/sim_delivery_stage_a/stage_a_selected.yaml"
+min_goal_dist: 3.0
+experiments:
+  - {name: b1_simple_smac2d_dwb, robot: wheeled_quadruped, world: simple, global_planner: smac_2d, local_planner: dwb, repeats: 1}
+  - {name: b2_simple_navfn_dwb, robot: wheeled_quadruped, world: simple, global_planner: navfn, local_planner: dwb, repeats: 1}
+  - {name: b3_simple_smachybrid_mppi, robot: wheeled_quadruped, world: simple, global_planner: smac_hybrid, local_planner: mppi, repeats: 1}
+  - {name: b4_simple_smac2d_rpp, robot: wheeled_quadruped, world: simple, global_planner: smac_2d, local_planner: rpp, repeats: 1}
+  - {name: b5_medium_smac2d_dwb, robot: wheeled_quadruped, world: medium, global_planner: smac_2d, local_planner: dwb, repeats: 1}
+  - {name: b6_medium_smachybrid_mppi, robot: wheeled_quadruped, world: medium, global_planner: smac_hybrid, local_planner: mppi, repeats: 1}
+  - {name: b7_complex_smac2d_dwb, robot: wheeled_quadruped, world: complex, global_planner: smac_2d, local_planner: dwb, repeats: 1}
+  - {name: b8_complex_smachybrid_mppi, robot: wheeled_quadruped, world: complex, global_planner: smac_hybrid, local_planner: mppi, repeats: 1}
+summary_metrics:
+  - {key: success_rate, higher_is_better: true, label: success_rate}
+  - {key: time_to_goal_mean, higher_is_better: false, label: time_to_goal_mean}
+  - {key: tracking_error_rmse, higher_is_better: false, label: tracking_error_rmse}
+  - {key: collision_count, higher_is_better: false, label: collision_count}

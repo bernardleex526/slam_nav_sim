@@ -1,0 +1,139 @@
+# 接口规范的机器可读版本。
+# 供 check_interface 节点做自动校验，也供各 launch 读取默认值，避免硬编码。
+
+interface_spec:
+  version: "0.1.0"
+
+  # 必需 frame：启动后必须在 TF 树中存在
+  required_frames:
+    - map
+    - odom
+    - base_footprint
+    - base_link
+    - imu_link
+    - lidar_link
+
+  # 可选 frame：按 sensor_profile 决定是否检查
+  optional_frames:
+    lidar3d_imu_cam: [camera_link, camera_optical_frame]
+    mid360_imu_cam: [camera_link, camera_optical_frame]
+    cam_only: [camera_link, camera_optical_frame]
+
+  # 必需话题：算法侧的消费契约
+  required_topics:
+    - name: /points
+      type: sensor_msgs/msg/PointCloud2
+      required_for: [lidar3d_imu, lidar3d_imu_cam, mid360_imu, mid360_imu_cam]
+    - name: /imu
+      type: sensor_msgs/msg/Imu
+      required_for: [lidar3d_imu, lidar3d_imu_cam, mid360_imu, mid360_imu_cam]
+    - name: /odom
+      type: nav_msgs/msg/Odometry
+      required_for: [all]
+    - name: /joint_states
+      type: sensor_msgs/msg/JointState
+      required_for: [all]
+
+  # 相机相关话题
+  camera_topics:
+    - name: /camera/image_raw
+      type: sensor_msgs/msg/Image
+    - name: /camera/camera_info
+      type: sensor_msgs/msg/CameraInfo
+    - name: /camera/depth/image_raw
+      type: sensor_msgs/msg/Image
+    - name: /camera/points
+      type: sensor_msgs/msg/PointCloud2
+
+  # 里程计与建图输出
+  output_topics:
+    odom: /odom
+    odom_gt: /ground_truth/odom
+    map_2d: /map
+    map_3d: /map_cloud
+    map_3d_downsampled: /map_cloud_downsampled
+    cmd_vel: /cmd_vel
+    plan: /plan
+    local_plan: /local_plan
+    goal_pose: /goal_pose
+
+  # 传感器档位定义
+  sensor_profiles:
+    lidar3d_imu:
+      lidar: velodyne_like_16
+      imu: true
+      camera: false
+    lidar3d_imu_cam:
+      lidar: velodyne_like_16
+      imu: true
+      camera: d435
+    mid360_imu:
+      lidar: mid360
+      imu: true
+      camera: false
+    mid360_imu_cam:
+      lidar: mid360
+      imu: true
+      camera: d435
+    cam_only:
+      lidar: none
+      imu: true          # VIO 也需要 IMU
+      camera: d435
+
+  # 雷达型号参数（供传感器宏读取默认值）
+  lidar_models:
+    mid360:
+      plugin: libgazebo_ros_livox_laser.so
+      topic: /points
+      frame: lidar_link
+      update_rate: 10.0
+      horizontal_fov_deg: 360.0
+      vertical_fov_deg: 59.0
+      samples: 24000          # 非重复扫描，每帧点数
+      min_range: 0.1
+      max_range: 70.0
+      supports_internal_imu: true
+    velodyne_like_16:
+      plugin: libgazebo_ros_ray_sensor.so
+      topic: /points
+      frame: lidar_link
+      update_rate: 10.0
+      horizontal_fov_deg: 360.0
+      vertical_fov_deg: 30.0
+      channels: 16
+      samples_per_channel: 1800
+      min_range: 0.3
+      max_range: 100.0
+      supports_internal_imu: false
+
+  # 评测指标定义（供 metrics 节点读取，统一口径）
+  metrics:
+    mapping:
+      - ate_rmse          # 绝对轨迹误差 RMSE，需 evo 对齐
+      - ate_max
+      - rpe_trans_rmse    # 相对位姿误差（平移）
+      - coverage_ratio    # 对 GT 栅格的可通行区域覆盖率
+      - grid_accuracy     # 与 GT 栅格的逐格一致率
+      - map_point_count   # 地图点数
+      - loop_closures     # 回环次数（算法自报）
+    navigation:
+      - success_rate      # 到达目标成功率
+      - time_to_goal      # 到达耗时
+      - path_length       # 实际行驶距离
+      - path_efficiency   # 最优路径长度 / 实际路径长度
+      - min_obstacle_dist # 与障碍物最小距离
+      - collision_count   # 碰撞次数
+      - tracking_error    # 路径跟踪误差 RMSE
+      - smoothness        # 速度指令抖动（jerk 积分）
+
+  # 默认参数（launch 未显式指定时使用）
+  defaults:
+    robot: wheeled_quadruped
+    world: simple
+    mapping: none
+    navigation: none
+    odom_source: gt
+    global_planner: smac_2d
+    local_planner: dwb
+    use_gimbal_stabilizer: true
+    headless: false

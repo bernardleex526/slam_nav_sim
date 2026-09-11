@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>robot_descriptions</name>
+  <version>0.1.0</version>
+  <description>
+    机器人模型空间：参数化 xacro 模板（四足 / 轮足 / AGV 预留）+ 传感器宏库 +
+    Gazebo 插件封装 + URDF 加载管线。换机器人只需换 config/robot_params.yaml
+    里的 profile，不需要改任何算法或 launch 逻辑。
+  </description>
+  <maintainer email="bernard@todo.todo">Bernard</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <build_depend>gazebo_dev</build_depend>
+  <build_depend>gazebo_ros</build_depend>
+  <depend>std_msgs</depend>
+
+  <exec_depend>robot_interface_spec</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <!-- 外部开源 URDF：宇树 Go2W 轮足模型（go2w profile 需要）。
+       不写成 <depend> 是因为它只被 xacro/external/go2w 这一个模板引用，
+       且属于"可选资产"—— 缺了它其余 profile 应照常可用。 -->
+  <exec_depend>go2w_description</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>tf_transformations</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

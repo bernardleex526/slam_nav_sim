@@ -1,0 +1,153 @@
+# =============================================================================
+# slam_toolbox 参数（本项目专用）—— 字段名已对照 Humble 官方
+#    /opt/ros/humble/share/slam_toolbox/config/mapper_params_online_sync.yaml
+# -----------------------------------------------------------------------------
+# 为什么必须自己写一份，而不能用默认：
+#
+#   1. 【本文件存在的头号理由】`min_laser_range` 默认 0.0
+#      （注意字段名是 min_laser_range，不是 minimum_laser_range —— 后者
+#      不是 slam_toolbox 的参数名，写了会被 ROS2 静默忽略，不报错、不生效，
+#      是典型的"配了等于没配"陷阱。）
+#
+#      我们的 /scan 来自 points_to_scan，盲区滤除后 range_min = 0.6m。
+#      slam_toolbox 若按 0.0 收，会把 0.0~0.6 这段当成"未观测"，
+#      在机器人周围刷出一圈假的自由空间，把近处墙体信息"擦除"。
+#      这是占据召回率偏低的一个直接、可验证的来源。
+#
+#   2. minimum_travel_distance / heading 默认 0.5 / 0.5
+#      对总长几十米的室内地图来说太稀疏：节点少 → scan matching 约束少 →
+#      回环容易漏。收到 0.25 提高建图精度（代价是 Ceres 稍慢，仿真可接受）。
+#
+#   3. minimum_time_interval 默认 0.5
+#      仿真里点云 10Hz，若每 0.5s 才处理一帧，等于丢掉 80% 的观测。
+#      收到 0.2（5Hz 处理频率），精度与算力平衡。
+#
+#   4. enable_interactive_mode 默认 true —— 需要 rviz 交互面板，无头批量跑时
+#      没意义，关掉减少一个潜在阻塞点。
+#
+# 保留官方默认值的项（resolution=0.05、max_laser_range=20.0 等）也显式写出，
+# 这样这份文件是【完整可替换】的，不依赖读者记得默认值是多少。
+# =============================================================================
+
+slam_toolbox:
+  ros__parameters:
+    # ---- 求解器 ----
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    # ---- frame / 话题契约 ----
+    # 必须与 robot_params.yaml 的 base_frame、points_to_scan 的输出一致
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /scan
+    use_map_saver: true
+    mode: mapping            # mapping | localization；本项目阶段A只用 mapping
+
+    # ---- 运行期行为 ----
+    debug_logging: false
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    map_update_interval: 2.0
+    # ⚠️ 无头批量评测必须关掉，它需要 rviz 交互面板
+    enable_interactive_mode: false
+
+    # ---- 栅格 ----
+    # 与 GT 栅格 0.10 的关系：0.05 更细，评测时降采样对齐是安全的。
+    # 反过来（比 GT 粗）才丢信息，绝不能设 > 0.10。
+    resolution: 0.05
+
+    # ---- 雷达几何：本文件存在的头号理由（见顶部注释）----
+    # 与 points_to_scan.py 的 max(range_min, blind_zone) = 0.6 严格对齐
+    min_laser_range: 0.6
+    max_laser_range: 20.0
+
+    minimum_time_interval: 0.2
+    transform_timeout: 0.5
+    tf_buffer_duration: 30.0
+    stack_size_to_use: 40000000
+
+    # ---- scan matching ----
+    use_scan_matching: true
+    use_scan_barycenter: true
+    # 官方默认 0.5。曾收到 0.25 想"提高精度"，但节点密度翻倍 →
+    # 位姿图规模翻倍、每条新扫描可选择的匹配对象更多 →
+    # 单次误匹配的影响面更大（实测地图被拖出场外，见下方
+    # scan_buffer_maximum_scan_distance 的注释）。
+    # 本项目的探索速度只有 0.5 m/s，0.5m 一个节点已经足够稠密。
+    minimum_travel_distance: 0.5
+    minimum_travel_heading: 0.5
+    scan_buffer_size: 10
+    # ⚠️ 官方默认 10.0。语义是「扫描链缓冲的空间跨度」——
+    #    "Maximum distance of a scan from the pose before removing the scan
+    #     from the buffer"（见 slam_toolbox README, Matcher Params）。
+    #    即：当某帧扫描离当前位姿超过这个距离，就把它从局部链里剔除。
+    #
+    #    【曾经被我误解并改错】我一度以为它是"参与匹配的观测距离上限"，
+    #    理由是"场地 20x20m、对角 28m，10 太小"。这是错的：
+    #      · 局部扫描链本来就【应该】只覆盖机器人周围一小片区域，
+    #        这样匹配约束来自附近的几何，优化是局部稳定的；
+    #      · 把它加到 30（覆盖全场地）会让整条链横跨整个场地，
+    #        每一帧新扫描都要和链里那些已经走了十几米的旧帧做匹配，
+    #        一旦某次匹配出错，误差会沿着链把【大段已建好的地图拖走】。
+    #
+    #    实测证据：simple 跑完后估计地图有 10114 个占据格，其中
+    #    5316 个（52.6%）落在 20x20m 世界【之外】（x 到 28.5m、y 到 -16.5m）。
+    #    而同一次运行的位姿精度是好的（对比 GT 位姿中位偏差仅 0.05m），
+    #    说明不是稳态定位漂移，而是建图过程中整块子图被拖出去了。
+    #
+    #    回到官方默认 10.0。若场地确实大到局部链不够用，应该调的是
+    #    link_scan_maximum_distance，而不是这个。
+    scan_buffer_maximum_scan_distance: 10.0
+    # ⚠️ 官方默认 0.1 —— 不要动（与 correlation_search_space_dimension
+    #    同批改过，触发 Karto "unable to get pointer in probability search"
+    #    FATAL，见下方相关性搜索段的踩坑注释）。已回退保守值。
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+
+    # ---- 回环 ----
+    do_loop_closing: true
+    loop_search_maximum_distance: 3.0
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+
+    # ---- 相关性搜索 ----
+    # ⚠️⚠️ 官方默认 0.5，**不要动这个值**（2026-09-11 实测踩坑）：
+    #    曾为抑制"幽灵放射墙"把它收到 0.25（理由：odom=GT 初值准），
+    #    结果 medium/complex 两轮都在收到第一帧 scan 后约 75 秒崩：
+    #      terminate called after throwing an instance of 'std::runtime_error'
+    #        what(): Mapper FATAL ERROR - unable to get pointer in probability search!
+    #      [ERROR] process has died [exit code -6]
+    #    Karto 的 CorrelationGrid 用 dimension/resolution 预计算查表偏移，
+    #    搜索空间改小会让查表越界、直接 FATAL —— 而且它死得很干脆，
+    #    探索照常跑满 40 分钟、日志里没有任何 slam 异常，只在存图时才
+    #    暴露（/map 无发布者）。两轮 86 分钟全部作废。
+    #    幽灵墙改由 tools/crop_map_to_traj.py 后处理解决（实测 0.88->0.042）。
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    # ---- 惩罚项 ----
+    distance_variance_penalty: 0.5
+    angle_variance_penalty: 1.0
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
+    min_pass_through: 2
+
+    # ---- 占据判定 ----
+    # 0.1 偏敏感（少量命中即记为占据），在仿真理想雷达下合适；
+    # 真机噪声大时应调到 0.3~0.5 抑制幽灵墙。
+    occupancy_threshold: 0.1

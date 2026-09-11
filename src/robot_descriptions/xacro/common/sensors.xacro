@@ -1,0 +1,414 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- =========================================================================
+       传感器宏库
+       =========================================================================
+       所有传感器都通过这里的宏挂载，保证：
+         1. frame 命名符合 robot_interface_spec/SPEC.md
+         2. 话题名固定在契约上（/points /imu /camera/...）
+         3. IMU 协方差非零（否则 LIO 类算法会静默失效，这是最常见的坑）
+         4. 传感器 profile 可切换，不用改机器人本体
+       ========================================================================= -->
+
+  <!-- =========================================================================
+       1. IMU
+       =========================================================================
+       关键点：
+         - 必须给 <noise> 块，插件会把 stddev^2 填进协方差矩阵。
+           如果协方差全零，FAST-LIO2 / LIO-SAM 会把 IMU 当成绝对真值，
+           把点云权重压到 0 —— 表现为"能跑但建图完全不对"，且无任何报错。
+         - initial_orientation_as_reference=false：以世界系为参考，
+           否则每次重启 IMU 姿态参考都在变，LIO 初始化会漂。
+       ========================================================================= -->
+  <xacro:macro name="sim_imu_sensor"
+    params="name parent
+            joint_name:=''
+            xyz:='0 0 0' rpy:='0 0 0'
+            topic:=imu
+            update_rate:=200.0
+            gyro_stddev:=0.0002
+            gyro_bias_stddev:=0.00001
+            accel_stddev:=0.002
+            accel_bias_stddev:=0.0001">
+
+    <link name="${name}_link">
+      <xacro:sim_box_inertia mass="0.02" size_x="0.03" size_y="0.03" size_z="0.012"/>
+      <visual>
+        <geometry><box size="0.03 0.03 0.012"/></geometry>
+        <material name="sim_sensor_black"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.03 0.03 0.012"/></geometry>
+      </collision>
+    </link>
+
+    <joint name="${joint_name if joint_name else name + '_joint'}" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <sensor name="${name}_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>${update_rate}</update_rate>
+        <visualize>false</visualize>
+        <imu>
+          <angular_velocity>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>${gyro_stddev}</stddev>
+                 <bias_mean>0.0</bias_mean><bias_stddev>${gyro_bias_stddev}</bias_stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>${gyro_stddev}</stddev>
+                 <bias_mean>0.0</bias_mean><bias_stddev>${gyro_bias_stddev}</bias_stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>${gyro_stddev}</stddev>
+                 <bias_mean>0.0</bias_mean><bias_stddev>${gyro_bias_stddev}</bias_stddev></noise></z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>${accel_stddev}</stddev>
+                 <bias_mean>0.0</bias_mean><bias_stddev>${accel_bias_stddev}</bias_stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>${accel_stddev}</stddev>
+                 <bias_mean>0.0</bias_mean><bias_stddev>${accel_bias_stddev}</bias_stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>${accel_stddev}</stddev>
+                 <bias_mean>0.0</bias_mean><bias_stddev>${accel_bias_stddev}</bias_stddev></noise></z>
+          </linear_acceleration>
+        </imu>
+        <plugin name="${name}_plugin" filename="libgazebo_ros_imu_sensor.so">
+          <ros>
+            <namespace>/</namespace>
+            <remapping>~/out:=${topic}</remapping>
+          </ros>
+          <initial_orientation_as_reference>false</initial_orientation_as_reference>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+
+  <!-- =========================================================================
+       2. 标准 16/32 线 3D 激光雷达（Gazebo 原生 ray sensor）
+       =========================================================================
+       点云规整、稳定，作为 LIO 的 baseline 对照输入。
+       /points 走 PointCloud2；同时由适配节点切出虚拟 /scan 供 2D SLAM 使用。
+       ========================================================================= -->
+  <xacro:macro name="sim_lidar_3d_sensor"
+    params="name parent
+            xyz:='0 0 0' rpy:='0 0 0'
+            topic:=points
+            frame:=lidar_link
+            msg_frame:=''
+            update_rate:=10.0
+            channels:=16
+            samples:=1800
+            h_fov_deg:=360.0
+            v_fov_deg:=30.0
+            min_range:=0.3
+            max_range:=100.0
+            noise_stddev:=0.008">
+
+    <xacro:property name="h_min" value="${-h_fov_deg / 2.0 * pi / 180.0}"/>
+    <xacro:property name="h_max" value="${ h_fov_deg / 2.0 * pi / 180.0}"/>
+    <xacro:property name="v_min" value="${-v_fov_deg / 2.0 * pi / 180.0}"/>
+    <xacro:property name="v_max" value="${ v_fov_deg / 2.0 * pi / 180.0}"/>
+
+    <link name="${frame}">
+      <xacro:sim_cylinder_inertia mass="0.9" radius="0.05" length="0.07"/>
+      <visual>
+        <geometry><cylinder radius="0.05" length="0.07"/></geometry>
+        <material name="sim_sensor_black"/>
+      </visual>
+      <collision>
+        <geometry><cylinder radius="0.05" length="0.07"/></geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${frame}"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <gazebo reference="${frame}">
+      <sensor name="${name}_sensor" type="gpu_ray">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>${update_rate}</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>${samples}</samples>
+              <resolution>1</resolution>
+              <min_angle>${h_min}</min_angle>
+              <max_angle>${h_max}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>${channels}</samples>
+              <resolution>1</resolution>
+              <min_angle>${v_min}</min_angle>
+              <max_angle>${v_max}</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>${min_range}</min>
+            <max>${max_range}</max>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>${noise_stddev}</stddev>
+          </noise>
+        </ray>
+        <plugin name="${name}_plugin" filename="libgazebo_ros_ray_sensor.so">
+          <ros>
+            <namespace>/</namespace>
+            <remapping>~/out:=${topic}</remapping>
+          </ros>
+          <output_type>sensor_msgs/PointCloud2</output_type>
+          <!-- msg_frame 为空时用几何 frame；启用稳定云台时指向 lidar_stabilized，
+               该 frame 的 TF 由 gimbal_stabilizer 节点动态发布。 -->
+          <frame_name>${msg_frame == '' and frame or msg_frame}</frame_name>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+
+  <!-- =========================================================================
+       3. MID360 非重复扫描激光雷达（livox_laser_simulation 插件）
+       =========================================================================
+       贴近真机：点云稀疏且非均匀分布，这是检验 LIO 算法真实鲁棒性的关键输入。
+       依赖外部插件，需要先编译 livox_laser_simulation（见 install_deps.sh）。
+
+       注意：该插件的 .so 文件名在不同 fork 里不一致，这里参数化，
+             若报 "Failed to load plugin" 就按实际编译产物改 mid360_plugin。
+       ========================================================================= -->
+  <xacro:macro name="sim_lidar_mid360_sensor"
+    params="name parent
+            xyz:='0 0 0' rpy:='0 0 0'
+            topic:=points
+            frame:=lidar_link
+            msg_frame:=''
+            update_rate:=10.0
+            samples:=24000
+            h_fov_deg:=360.0
+            v_fov_deg:=59.0
+            min_range:=0.1
+            max_range:=70.0
+            mid360_plugin:=libgazebo_ros_livox_laser.so
+            csv_file:=mid360.csv">
+
+    <xacro:property name="h_min" value="${-h_fov_deg / 2.0 * pi / 180.0}"/>
+    <xacro:property name="h_max" value="${ h_fov_deg / 2.0 * pi / 180.0}"/>
+    <xacro:property name="v_min" value="${-v_fov_deg / 2.0 * pi / 180.0}"/>
+    <xacro:property name="v_max" value="${ v_fov_deg / 2.0 * pi / 180.0}"/>
+
+    <link name="${frame}">
+      <xacro:sim_box_inertia mass="0.27" size_x="0.06" size_y="0.06" size_z="0.07"/>
+      <visual>
+        <geometry><box size="0.06 0.06 0.07"/></geometry>
+        <material name="sim_metal"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.06 0.06 0.07"/></geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${frame}"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <gazebo reference="${frame}">
+      <sensor name="${name}_sensor" type="ray">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>${update_rate}</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>${samples}</samples>
+              <resolution>1</resolution>
+              <min_angle>${h_min}</min_angle>
+              <max_angle>${h_max}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>${v_min}</min_angle>
+              <max_angle>${v_max}</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>${min_range}</min>
+            <max>${max_range}</max>
+          </range>
+        </ray>
+        <plugin name="${name}_plugin" filename="${mid360_plugin}">
+          <ros>
+            <namespace>/</namespace>
+            <remapping>~/out:=${topic}</remapping>
+          </ros>
+          <topicName>/${topic}</topicName>
+          <frameName>${msg_frame == '' and frame or msg_frame}</frameName>
+          <csv_file_name>${csv_file}</csv_file_name>
+          <visualize>false</visualize>
+          <samples>${samples}</samples>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+
+  <!-- =========================================================================
+       4. RealSense D435 RGB-D 相机
+       =========================================================================
+       输出契约：
+         /camera/image_raw          RGB
+         /camera/camera_info        内参
+         /camera/depth/image_raw    深度（m）
+         /camera/points             反投影点云
+
+       相机必须有两个 link：物理 frame（camera_link）和光学 frame
+       （camera_optical_frame，z 朝前 x 朝右 y 朝下）。少了光学 frame，
+       视觉 SLAM 会静默出错 —— 这不是可选项。
+       ========================================================================= -->
+  <xacro:macro name="sim_depth_camera_sensor"
+    params="name parent
+            xyz:='0 0 0' rpy:='0 0 0'
+            update_rate:=30.0
+            width:=640 height:=480
+            hfov_deg:=87.0
+            near:=0.1 far:=10.0">
+
+    <xacro:property name="hfov_rad" value="${hfov_deg * pi / 180.0}"/>
+    <xacro:property name="optical_rpy" value="1.5707963 -1.5707963 0.0"/>
+
+    <link name="${name}_link">
+      <xacro:sim_box_inertia mass="0.07" size_x="0.09" size_y="0.025" size_z="0.025"/>
+      <visual>
+        <geometry><box size="0.09 0.025 0.025"/></geometry>
+        <material name="sim_sensor_black"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.09 0.025 0.025"/></geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+
+    <link name="${name}_optical_frame"/>
+
+    <joint name="${name}_optical_joint" type="fixed">
+      <parent link="${name}_link"/>
+      <child link="${name}_optical_frame"/>
+      <origin xyz="0 0 0" rpy="${optical_rpy}"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+      <sensor name="${name}_sensor" type="depth">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>${update_rate}</update_rate>
+        <camera name="${name}">
+          <horizontal_fov>${hfov_rad}</horizontal_fov>
+          <image>
+            <width>${width}</width>
+            <height>${height}</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>${near}</near>
+            <far>${far}</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </camera>
+        <plugin name="${name}_plugin" filename="libgazebo_ros_camera.so">
+          <!-- 话题名 = <namespace> + <camera_name> + 固定后缀，实测结果：
+                 /camera/image_raw          RGB
+                 /camera/camera_info        内参
+                 /camera/depth/image_raw    深度（米）
+                 /camera/depth/camera_info
+                 /camera/points             反投影点云
+
+              两个坑（都踩过）：
+               1) namespace 设 /camera 且 camera_name 也是 camera 时，会得到
+                  /camera/camera/image_raw 这种重复前缀。这里 namespace 留 /，
+                  只靠 camera_name 构造前缀。
+               2) 本插件发布的是 <camera_name>/... 相对名，所以 <remapping> 里
+                  写 ~/image_raw:=... 完全不会生效（静默无效，不报错）。
+                  要改话题名就直接改 namespace / camera_name，别写重映射。 -->
+          <ros>
+            <namespace>/</namespace>
+          </ros>
+          <camera_name>${name}</camera_name>
+          <frame_name>${name}_optical_frame</frame_name>
+          <hack_baseline>0.07</hack_baseline>
+          <min_depth>${near}</min_depth>
+          <max_depth>${far}</max_depth>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+
+  <!-- =========================================================================
+       5. 传感器档位分发
+       =========================================================================
+       按 sensor_profile 决定挂哪些传感器。档位定义见
+       robot_interface_spec/config/interface.yaml -> sensor_profiles
+       ========================================================================= -->
+  <xacro:macro name="sim_sensor_suite"
+    params="profile
+            lidar_parent lidar_frame
+            lidar_msg_frame:=''
+            lidar_xyz:='0 0 0' lidar_rpy:='0 0 0'
+            camera_xyz:='0 0 0' camera_rpy:='0 0 0'
+            imu_joint_name:=''
+            imu_xyz:='0 0 0' imu_rpy:='0 0 0'">
+
+    <!-- IMU：除了纯激光档位之外都需要；cam_only（VIO）也需要 -->
+    <xacro:if value="${profile == 'lidar3d_imu' or
+                       profile == 'lidar3d_imu_cam' or
+                       profile == 'mid360_imu' or
+                       profile == 'mid360_imu_cam' or
+                       profile == 'cam_only'}">
+      <xacro:sim_imu_sensor name="imu" parent="base_link"
+                            joint_name="${imu_joint_name}"
+                            xyz="${imu_xyz}" rpy="${imu_rpy}" topic="imu"/>
+    </xacro:if>
+
+    <!-- 标准 16 线 3D 雷达 -->
+    <xacro:if value="${profile == 'lidar3d_imu' or profile == 'lidar3d_imu_cam'}">
+      <xacro:sim_lidar_3d_sensor name="lidar" parent="${lidar_parent}"
+                                  xyz="${lidar_xyz}" rpy="${lidar_rpy}"
+                                  topic="points" frame="${lidar_frame}"
+                                  msg_frame="${lidar_msg_frame}"/>
+    </xacro:if>
+
+    <!-- MID360 -->
+    <xacro:if value="${profile == 'mid360_imu' or profile == 'mid360_imu_cam'}">
+      <xacro:sim_lidar_mid360_sensor name="lidar" parent="${lidar_parent}"
+                                      xyz="${lidar_xyz}" rpy="${lidar_rpy}"
+                                      topic="points" frame="${lidar_frame}"
+                                      msg_frame="${lidar_msg_frame}"/>
+    </xacro:if>
+
+    <!-- 视觉：RGB-D -->
+    <xacro:if value="${profile == 'lidar3d_imu_cam' or
+                       profile == 'mid360_imu_cam' or
+                       profile == 'cam_only'}">
+      <xacro:sim_depth_camera_sensor name="camera" parent="base_link"
+                                      xyz="${camera_xyz}" rpy="${camera_rpy}"/>
+    </xacro:if>
+
+  </xacro:macro>
+
+</robot>

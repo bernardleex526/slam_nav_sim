@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>mapping_adapters</name>
+  <version>0.1.0</version>
+  <description>
+    建图算法适配层。
+    核心设计：不做 pluginlib 大统一（外部包依赖/节点结构差异太大，硬统一只会
+    得到一个谁都不像的怪物），而是「统一话题契约 + launch 分发 + 薄适配节点」。
+    加新算法 = 加一个目录，算法侧零改动。
+  </description>
+  <maintainer email="bernard@todo.todo">Bernard</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>robot_interface_spec</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>tf2_sensor_msgs</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

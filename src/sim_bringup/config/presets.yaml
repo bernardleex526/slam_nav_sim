@@ -1,0 +1,93 @@
+# =============================================================================
+# 常用场景预设
+# -----------------------------------------------------------------------------
+# 不是给 launch 读的配置，而是"我该敲哪条命令"的速查。
+# 每个场景都写清了目的、命令、以及该盯哪个指标 ——
+# 因为知道敲什么命令不等于知道跑完该看什么。
+# =============================================================================
+
+presets:
+
+  # ---------------------------------------------------------------------------
+  - id: smoke
+    name: 冒烟测试
+    purpose: 验证整条链路（Gazebo -> URDF -> 话题 -> rviz）是通的，不测算法
+    command: >
+      ros2 launch sim_bringup sim.launch.py
+      robot:=wheeled_quadruped world:=simple check:=true
+    watch:
+      - rviz 里能看到机器人、点云、TF 树完整
+      - check_interface 输出"接口检查全部通过"
+    notes: 新机器装完环境第一件事就是跑这个。它不过，后面全是白搭。
+
+  # ---------------------------------------------------------------------------
+  - id: mapping_quality
+    name: 建图质量测试
+    purpose: 看建图算法在三档难度下的地图质量
+    command: >
+      ros2 launch sim_bringup sim.launch.py
+      world:=complex mapping:=fast_lio odom_source:=lio metrics:=true
+    watch:
+      - /map_cloud 的墙体厚度是否均匀（不均匀=抖动或外参问题）
+      - /eval/metrics 的 ate_rmse_online
+      - rviz 里 /points_medium 与 /points_heavy 对比，看砍到 0.5m 还剩多少结构
+    notes: 长直走廊是最容易翻车的地方，重点看走廊尽头的墙有没有"叠影"。
+
+  # ---------------------------------------------------------------------------
+  - id: planner_compare
+    name: 规划器横向对比
+    purpose: 固定地图与机器人，只变规划器，做公平对比
+    command: >
+      python3 $(ros2 pkg prefix sim_benchmark)/lib/sim_benchmark/benchmark_runner.py
+      --matrix $(ros2 pkg prefix sim_benchmark)/share/sim_benchmark/config/benchmark_matrix.yaml
+      --only wq_simple
+    watch:
+      - summary.csv 的 success_rate / time_to_goal_mean / tracking_error_rmse
+      - 各指标最优那一行
+    notes: >
+      必须用 localization:=amcl + 同一张保存好的地图，否则每次建图结果都不同，
+      差异里混进了建图噪声，比不出规划器的真实差别。
+
+  # ---------------------------------------------------------------------------
+  - id: gimbal_ablation
+    name: 稳定云台消融实验
+    purpose: 量化躯干抖动对建图精度的影响
+    command: >
+      # A 组（有云台）
+      ros2 launch sim_bringup sim.launch.py world:=medium mapping:=fast_lio
+        odom_source:=lio use_gimbal:=true run_name:=gimbal_on metrics:=true
+      # B 组（无云台）
+      ros2 launch sim_bringup sim.launch.py world:=medium mapping:=fast_lio
+        odom_source:=lio use_gimbal:=false run_name:=gimbal_off metrics:=true
+    watch:
+      - 两组的 ate_rmse_online 与 /map_cloud 的墙厚
+    notes: >
+      这是本项目里最能体现"变量隔离"价值的一个实验：其他条件全同，
+      只切 use_gimbal，差异就干净地归因到抖动。
+
+  # ---------------------------------------------------------------------------
+  - id: robot_swap
+    name: 换机器人验证接口规范
+    purpose: 验证"换机器人只改参数"这个承诺是否成立
+    command: >
+      ros2 launch sim_bringup sim.launch.py robot:=quadruped world:=medium
+        mapping:=slam_toolbox navigation:=nav2
+    watch:
+      - costmap 的 footprint 是否变了（rviz 里看紫色多边形）
+      - 是否不需要改任何算法代码就跑起来了
+    notes: 两份 robot_params.yaml 的 footprint 不同，Nav2 的膨胀半径应自动跟着变。
+
+  # ---------------------------------------------------------------------------
+  - id: nav_offline
+    name: 纯导航（用已保存地图）
+    purpose: 反复调 Nav2 参数时用，不用每次都重新建图
+    command: >
+      ros2 launch sim_bringup sim.launch.py world:=simple navigation:=nav2
+        localization:=amcl map:=$HOME/maps/simple.yaml
+        global_planner:=smac_hybrid local_planner:=mppi
+    watch:
+      - rviz 里 /plan 和 /local_plan 的形状
+      - /local_costmap/costmap 的膨胀是否合理
+    notes: >
+      先用一次建图跑一圈并保存地图：
+      ros2 run nav2_map_server map_saver_cli -f $HOME/maps/simple

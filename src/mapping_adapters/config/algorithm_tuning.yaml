@@ -1,0 +1,84 @@
+# =============================================================================
+# 建图算法调参速查
+# -----------------------------------------------------------------------------
+# 这里不提供可直接喂给算法的 yaml —— 因为 FAST-LIO2 / LIO-SAM 的 ROS2 分支
+# 字段名各不相同，提供一份"看起来能用但字段全错"的配置只会让你在编译通过的
+# 假象里浪费时间。
+#
+# 这里提供的是：每个算法**真正决定成败的那几个参数**，以及在本仿真环境里的
+# 推荐起点。按这张表对齐你那份 fork 的字段名，比抄一份 yaml 靠谱得多。
+# =============================================================================
+
+fast_lio:
+  key_params:
+    - name: 雷达类型 / 点云类型
+      value: 需与仿真一致（PointCloud2 / CustomMsg 决定读哪个话题）
+      why: 类型不匹配会静默收不到数据，节点活着但地图永远空白
+    - name: 外参 extrinsic_R / extrinsic_T
+      value: 到 lidar_link 的固定变换，从 robot_params.yaml 的 sensor_mounts 抄
+      why: 外参错 1cm，长走廊里会累积成米级漂移
+    - name: 累加点数 / filter_size_map
+      value: 0.2 ~ 0.4（default_map_size）
+      why: 决定地图点云稀疏度和内存。仿真里 24k 点/帧，设太小地图会"漏"
+    - name: 体素滤波 filter_size_surf
+      value: 0.2
+      why: 与 MID360 的天然稀疏度匹配；标准 16 线雷达可以设 0.15
+
+lio_sam:
+  key_params:
+    - name: sensor / N_SCAN / Horizon_SCAN
+      value: N_SCAN=16, Horizon_SCAN=1800（与 sensors.xacro 里的 samples 一致！）
+      why: 这两个值必须匹配点云的 ring/length，不一致会导致特征提取全错
+    - name: imu 频率 imuRate
+      value: 200（与 sensors.xacro 的 update_rate 一致）
+      why: 不一致会让 IMU 预积分时间戳错位
+    - name: 回环参数 loopClosureEnableFlag
+      value: 1
+      why: 关掉它就退化成一个普通里程计，测不出回环能力
+    - name: historyKeyframeSearchRadius
+      value: 15.0
+      why: 与地图尺度相关。simple(20m) 可以设小，complex(36m) 要放大
+
+rtabmap:
+  key_params:
+    - name: subscribe_depth / subscribe_rgb
+      value: true
+      why: 用 D435 的 RGB-D 输入
+    - name: approx_sync
+      value: true
+      why: 仿真里 RGB 和 depth 可能不是严格同步的
+    - name: Vis/FeatureType
+      value: 6 (GFTT/BRIEF) 或 8 (ORB)
+      why: 室内弱纹理场景下 GFTT 比 ORB 稳
+    - name: Rtabmap/DetectionRate
+      value: 1.0 ~ 2.0 Hz
+      why: 太高会让 CPU 成为瓶颈，仿真里 RTF 会掉
+
+slam_toolbox:
+  key_params:
+    - name: mode
+      value: mapping / localization
+      why: 建图和定位两个模式的参数完全不同，别混用
+    - name: minimum_travel_distance / minimum_travel_heading
+      value: 0.3 / 0.3
+      why: 控制节点插入频率。太小 → 图爆炸，太大 → 回环失败
+    - name: resolution
+      value: 0.05（与 GT 栅格 0.10 对齐或更细）
+      why: 比 GT 粗的话，栅格一致率指标会被分辨率差异掩盖
+    - name: loop_search_maximum_distance
+      value: 3.0
+      why: 室内 20–36m 场景的合理值
+
+# ---------------------------------------------------------------------------
+# 仿真侧必须先对齐的三个量（对齐了再调算法，顺序不能反）
+# ---------------------------------------------------------------------------
+sim_side_prereq:
+  - item: 点云点数
+    reference: robot_descriptions/xacro/common/sensors.xacro
+    note: livox samples=24000；标准 16 线 = 16 x 1800。算法里的 N_SCAN/Horizon_SCAN 必须一致
+  - item: IMU 频率与协方差
+    reference: sensors.xacro 里 sim_imu_sensor 的 update_rate / *_stddev
+    note: 协方差为 0 会让 LIO 静默失效，见 sensors.xacro 注释
+  - item: 雷达外参
+    reference: robot_params.yaml -> robots.<name>.sensor_mounts.lidar
+    note: 算法外参必须与此一致，否则整条链路都偏

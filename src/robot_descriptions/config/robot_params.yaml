@@ -1,0 +1,221 @@
+# =============================================================================
+# 机器人参数中心
+# -----------------------------------------------------------------------------
+# 换机器人 = 换这里的 profile 名。所有 launch 只读这个文件，不硬编码任何尺寸。
+# 对应需求 #6：不同机器人通过在仿真中改参数来适配 nav2 规划器。
+# =============================================================================
+
+# 当前激活的机器人 profile（sim.launch.py 的 robot:= 参数会覆盖它）
+active_robot: wheeled_quadruped
+
+robots:
+  agv:
+    description_package: robot_descriptions
+    description_xacro: xacro/agv/robot.urdf.xacro
+    robot_type: agv
+    base_frame: base_footprint
+    body_size: [0.65, 0.45, 0.20]
+    body_mass: 25.0
+    wheel_radius: 0.10
+    wheel_width: 0.05
+    stand_height: 0.20
+    footprint:
+      shape: polygon
+      vertices: "[[0.35, 0.29], [0.35, -0.29], [-0.35, -0.29], [-0.35, 0.29]]"
+    max_vel: {x: 1.0, y: 0.0, theta: 1.5}
+    min_vel: {x: -0.2, y: 0.0, theta: -1.5}
+    acc_lim: {x: 1.0, y: 0.0, theta: 2.0}
+    dec_lim: {x: 1.0, y: 0.0, theta: 2.0}
+    holonomic: false
+    min_in_place_vel_theta: 0.4
+    sensor_profile: lidar3d_imu_cam
+    sensor_mounts:
+      lidar: {xyz: [0.0, 0.0, 0.20], rpy: [0.0, 0.0, 0.0]}
+      camera: {xyz: [0.30, 0.0, 0.15], rpy: [0.0, 0.0, 0.0]}
+      imu: {xyz: [0.0, 0.0, 0.12], rpy: [0.0, 0.0, 0.0]}
+    odom_source: gt
+    use_gimbal_stabilizer: false
+
+  # ---------------------------------------------------------------------------
+  # 轮足式机器狗（Go2W / B2-W / 中狗 类）：2 腿关节 + 1 轮，共 12 DOF
+  # ---------------------------------------------------------------------------
+  wheeled_quadruped:
+    description_package: robot_descriptions
+    description_xacro: xacro/wheeled_quadruped/robot.urdf.xacro
+    robot_type: wheeled_quadruped
+    base_frame: base_footprint
+
+    # --- 几何（决定 nav2 costmap 膨胀与局部规划可行性）---
+    body_size: [0.70, 0.31, 0.20]       # 车体 box 尺寸 xyz (m)
+    body_mass: 12.0
+    hip_offset: [0.28, 0.16]            # 髋关节相对 body 中心 (x, ±y)
+    thigh_length: 0.20
+    wheel_radius: 0.085
+    wheel_width: 0.05
+    stand_height: 0.32                  # 正常站姿下 base_link 离地高度
+    wheelbase: 0.56                     # 前后轮距（用于检查 footprint 合理性）
+
+    footprint:
+      shape: polygon
+      # 轮足站姿下外形近似矩形，略保守
+      vertices: "[[0.48, 0.30], [0.48, -0.30], [-0.48, -0.30], [-0.48, 0.30]]"
+
+    # --- 运动学限制（决定 nav2 速度/加速度参数上界）---
+    max_vel:   {x: 1.5, y: 0.0, theta: 2.0}
+    min_vel:   {x: -0.3, y: 0.0, theta: -2.0}
+    acc_lim:   {x: 2.0, y: 0.0, theta: 3.0}
+    dec_lim:   {x: 2.0, y: 0.0, theta: 3.0}
+    # 轮足可原地转向（差速），因此 min_in_place_vel_theta 有意义
+    holonomic: false
+    min_in_place_vel_theta: 0.6
+
+    # --- 传感器档位 ---
+    # 默认用 lidar3d_imu_cam（Gazebo 原生 16 线 + IMU + RGB-D），
+    # 因为它【零外部依赖】，装完就能跑。
+    # mid360_imu_cam 需要额外编译 livox_laser_simulation，插件缺失时
+    # Gazebo 不会报错、只是不发 /points —— 表现为"仿真一切正常但没有点云"，
+    # 极易误判。所以不作为默认值。
+    sensor_profile: lidar3d_imu_cam
+    sensor_mounts:
+      lidar:  {xyz: [0.18, 0.0, 0.16], rpy: [0.0, 0.0, 0.0]}   # 车体前上方
+      camera: {xyz: [0.34, 0.0, 0.06], rpy: [0.0, 0.0, 0.0]}   # 前脸
+      imu:    {xyz: [0.18, 0.0, 0.16], rpy: [0.0, 0.0, 0.0]}   # 与雷达重合（MID360 内置 IMU）
+
+    odom_source: gt
+    use_gimbal_stabilizer: true
+
+  # ---------------------------------------------------------------------------
+  # 足式机器狗（Go2 / M20 类）：12 DOF，髋 roll + 大腿 pitch + 小腿 pitch
+  # ---------------------------------------------------------------------------
+  quadruped:
+    description_package: robot_descriptions
+    description_xacro: xacro/quadruped/robot.urdf.xacro
+    robot_type: quadruped
+    base_frame: base_footprint
+
+    body_size: [0.66, 0.30, 0.18]
+    body_mass: 11.0
+    hip_offset: [0.26, 0.15]
+    thigh_length: 0.22
+    shin_length: 0.22
+    foot_radius: 0.025
+    stand_height: 0.34
+
+    footprint:
+      shape: polygon
+      vertices: "[[0.46, 0.28], [0.46, -0.28], [-0.46, -0.28], [-0.46, 0.28]]"
+
+    max_vel:   {x: 1.2, y: 0.0, theta: 1.8}
+    min_vel:   {x: -0.2, y: 0.0, theta: -1.8}
+    acc_lim:   {x: 1.8, y: 0.0, theta: 2.5}
+    dec_lim:   {x: 1.8, y: 0.0, theta: 2.5}
+    holonomic: false
+    min_in_place_vel_theta: 0.5
+
+    # 默认零依赖档位，理由见 wheeled_quadruped 里的同名注释
+    sensor_profile: lidar3d_imu_cam
+    sensor_mounts:
+      lidar:  {xyz: [0.16, 0.0, 0.14], rpy: [0.0, 0.0, 0.0]}
+      camera: {xyz: [0.32, 0.0, 0.05], rpy: [0.0, 0.0, 0.0]}
+      imu:    {xyz: [0.16, 0.0, 0.14], rpy: [0.0, 0.0, 0.0]}
+
+    odom_source: gt
+    use_gimbal_stabilizer: true
+
+  # ---------------------------------------------------------------------------
+  # 宇树 Go2W：上游开源 URDF 导入（轮足式，真实官方模型）
+  # ---------------------------------------------------------------------------
+  # 与前面两个 profile 的本质区别：几何/惯量/网格【不来自我们的模板】，
+  # 而是直接加载宇树官方 URDF（unitreerobotics/unitree_ros，BSD 许可）。
+  # 我们的 xacro wrapper（xacro/external/go2w/robot.urdf.xacro）只做三件事：
+  #   1. include 上游 URDF，摊平它的 link/joint 树
+  #   2. 补 base_footprint 根 + base_link 别名（上游根 link 叫 base）
+  #   3. 注入传感器套件 + planar_move/真值里程计插件
+  #
+  # 这就是需求 #1「可直接解析的 URDF 空间」的落地方式：
+  #   上游模型照单收，我们的仿真能力靠注入补齐，算法侧零改动。
+  #
+  # ⚠️ 尺寸参数（body_size / hip_offset / thigh_length 等）在这里【不生效】——
+  #    几何由上游 URDF 决定。保留这些字段是为了让 build_robot_overlay 能推出
+  #    footprint；所以它们的值必须与上游 URDF 真实几何一致（已按上游量取）。
+  go2w:
+    description_package: robot_descriptions
+    description_xacro: xacro/external/go2w/robot.urdf.xacro
+    robot_type: wheeled_quadruped
+    base_frame: base_footprint
+    # 标记为外部模型：launch 会走"外部 URDF 导入"分支，跳过自研模板的参数注入
+    external_model: true
+    upstream: "https://github.com/unitreerobotics/unitree_ros -> robots/go2w_description"
+
+    # --- 几何（量自上游 go2w_description.urdf + dae 包围盒，用于推导 footprint/膨胀）---
+    # ⚠️ 这些值必须与上游 URDF 真实几何一致：虽然 external_model 走的是
+    #    "直接读上游 URDF"分支（build_robot_overlay 不看这些字段），
+    #    但 spawn 高度、footprint 推导仍读这里。量取方法见各字段注释。
+    body_size: [0.3762, 0.0935, 0.114]    # 上游 base 的碰撞盒尺寸
+    body_mass: 6.921                       # 上游 base inertial mass
+    hip_offset: [0.1934, 0.0465]           # 上游 FL_hip_joint origin.xy（实测）
+    # 上游链：base→FL_hip→FL_thigh→FL_calf→FL_foot 各段 origin.z
+    #   0 + 0 + (-0.2130) + (-0.2264) = -0.4394 m（base 到轮心）
+    # 这里填"轴距方向的那一段"，用于 footprint 推导；站姿高度见 stand_height。
+    thigh_length: 0.2130                   # calf 段 origin.z
+    calf_length: 0.2264                    # foot 段 origin.z（轮心偏移）
+    wheel_radius: 0.0860                   # left_wheel.dae 顶点包围盒 x/z 跨度 0.1719 / 2
+    wheel_width: 0.0518                    # left_wheel.dae 顶点包围盒 y 跨度
+    # = 0.4394（base→轮心）+ 0.0860（轮半径）= 0.5254 m
+    stand_height: 0.5254                   # 轮触地时 base 离地高度（实测推导，勿凭感觉改）
+    wheelbase: 0.3868                      # 前后髋距（2 × hip_offset.x = 2 × 0.1934）
+
+    footprint:
+      shape: polygon
+      # 上游车体仅 0.376×0.094，但四轮外扩到约 ±0.19 x / ±0.21 y。
+      # footprint 要包住【轮子/腿的外包络】而不是车体，否则贴墙会擦到腿。
+      # 取站立姿态下四轮外接矩形，外扩 10% 余量。
+      vertices: "[[0.30, 0.24], [0.30, -0.24], [-0.30, -0.24], [-0.30, 0.24]]"
+
+    # --- 运动学限制（来自 M20/Go2W 类平台的公开指标，仿真里取保守值）---
+    max_vel:   {x: 1.5, y: 0.0, theta: 2.0}
+    min_vel:   {x: -0.3, y: 0.0, theta: -2.0}
+    acc_lim:   {x: 2.0, y: 0.0, theta: 3.0}
+    dec_lim:   {x: 2.0, y: 0.0, theta: 3.0}
+    holonomic: false
+    min_in_place_vel_theta: 0.6
+
+    # --- 传感器档位 ---
+    # 雷达挂在车体顶部（上游 base 上方 0.14m，避免被腿/轮遮挡）
+    sensor_profile: lidar3d_imu_cam
+    sensor_mounts:
+      lidar:  {xyz: [0.0, 0.0, 0.14], rpy: [0.0, 0.0, 0.0]}
+      camera: {xyz: [0.20, 0.0, 0.04], rpy: [0.0, 0.0, 0.0]}
+      imu:    {xyz: [0.0, 0.0, 0.14], rpy: [0.0, 0.0, 0.0]}
+
+    odom_source: gt
+    use_gimbal_stabilizer: true
+
+  # ---------------------------------------------------------------------------
+  # AGV 差分底盘：预留给需求 #1 中提到的 AGV 场景。
+  # 第一轮不启用；加一个 xacro 文件 + 这段配置即可接入，算法侧零改动。
+  # ---------------------------------------------------------------------------
+  agv_diff:
+    _status: placeholder
+    description_package: robot_descriptions
+    description_xacro: xacro/agv_diff/robot.urdf.xacro   # TODO: 待补
+    robot_type: agv_diff
+    base_frame: base_footprint
+    body_size: [0.8, 0.5, 0.25]
+    body_mass: 30.0
+    wheel_radius: 0.1
+    footprint:
+      shape: circle
+      radius: 0.42
+    max_vel:   {x: 1.0, y: 0.0, theta: 1.5}
+    min_vel:   {x: -0.2, y: 0.0, theta: -1.5}
+    acc_lim:   {x: 1.0, y: 0.0, theta: 2.0}
+    dec_lim:   {x: 1.0, y: 0.0, theta: 2.0}
+    holonomic: false
+    min_in_place_vel_theta: 0.4
+    sensor_profile: lidar3d_imu
+    sensor_mounts:
+      lidar:  {xyz: [0.0, 0.0, 0.28], rpy: [0.0, 0.0, 0.0]}
+      camera: {xyz: [0.35, 0.0, 0.12], rpy: [0.0, 0.0, 0.0]}
+      imu:    {xyz: [0.0, 0.0, 0.28], rpy: [0.0, 0.0, 0.0]}
+    odom_source: gt
