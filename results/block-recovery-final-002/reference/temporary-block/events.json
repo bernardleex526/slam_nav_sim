@@ -1,0 +1,43 @@
+[
+  {
+    "kind": "navigation_waypoint",
+    "time_s": 5.067,
+    "goal": [
+      8,
+      0,
+      0
+    ]
+  },
+  {
+    "kind": "action_request_timing",
+    "time_s": 5.067,
+    "goal_request_wall_s": 7.495900035792147e-05,
+    "result_request_wall_s": 2.420800001345924e-05
+  },
+  {
+    "kind": "block_inserted",
+    "time_s": 10.168,
+    "request_time_s": 9.9,
+    "feedback": "amcl_map_tf"
+  },
+  {
+    "kind": "block_observed",
+    "time_s": 10.3,
+    "end_time_s": 13.16,
+    "source": "independent_truth"
+  },
+  {
+    "kind": "block_removed",
+    "time_s": 13.432,
+    "request_time_s": 13.163,
+    "odometry_stop_interval_s": [
+      10.16,
+      13.16
+    ]
+  },
+  {
+    "kind": "block_resumed",
+    "time_s": 16.56,
+    "source": "independent_truth"
+  }
+]

@@ -1,0 +1,5 @@
+name: loop-off
+seed: 9999
+ros:
+  loop_closing: false
+  settle_s: 3

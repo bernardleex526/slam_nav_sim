@@ -1,0 +1,175 @@
+{
+  "scenario": "public",
+  "backend": "local",
+  "seed": 9999,
+  "checks": [
+    {
+      "id": "SCAN_GAP",
+      "section": "mapping",
+      "status": "pass",
+      "value": 0.26625900000004776,
+      "threshold": 0.5,
+      "reason": "相邻估计位姿／扫描时间间隔",
+      "window_s": [
+        415.880054,
+        416.146313
+      ],
+      "evidence": [
+        "estimated.tum"
+      ],
+      "required": true
+    },
+    {
+      "id": "MAP_OUTPUT",
+      "section": "mapping",
+      "status": "pass",
+      "value": 121598,
+      "threshold": 100,
+      "reason": "可加载地图的已知栅格数",
+      "window_s": [],
+      "evidence": [
+        "map.yaml",
+        "map.pgm"
+      ],
+      "required": true
+    },
+    {
+      "id": "ATE",
+      "section": "mapping",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "缺少独立参考轨迹",
+      "window_s": [],
+      "evidence": [],
+      "required": true
+    },
+    {
+      "id": "MAP_REFERENCE",
+      "section": "mapping",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "公开日志没有测绘参考地图",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    },
+    {
+      "id": "LOOP_EVIDENCE",
+      "section": "mapping",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "BreezySLAM 不提供回环候选／接受事件；不能据最终轨迹推断原因",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    },
+    {
+      "id": "NAV2_RUNTIME",
+      "section": "navigation",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "本地回归不运行 Nav2；需使用 ROS 2 后端",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    },
+    {
+      "id": "GENERATED_MAP_NAVIGATION",
+      "section": "integration",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "待 ROS 2 / Gazebo 环境验收",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    }
+  ],
+  "provenance": {
+    "started_utc": "2026-11-16T02:09:01.943259+00:00",
+    "platform": "macOS-26.7.3-arm64-arm-64bit",
+    "python": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+    "config": {
+      "thresholds": {
+        "max_scan_gap_s": 0.5,
+        "min_known_cells": 100,
+        "ate_rmse_m": 0.75,
+        "min_pair_coverage": 0.95,
+        "max_pair_dt_s": 0.03,
+        "map_coverage": 0.7,
+        "false_free_rate": 0.1,
+        "wall_p95_m": 0.5,
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02
+      },
+      "seed": 9999
+    },
+    "fault": "none",
+    "software": {
+      "numpy": "1.26.4",
+      "rosbags": "0.9.23",
+      "evo": "1.30.0",
+      "pytest": "8.3.5"
+    },
+    "dataset": {
+      "name": "BreezySLAM Mines exp2",
+      "sha256": "8fcb61ab87e09c821a51cb13ecfabad3a11e414e6d3890bf9ea594b70fe52569",
+      "source": "https://github.com/simondlevy/BreezySLAM/tree/1170285cd42a88300eddd275fc3df36e642e3a2e/examples",
+      "independent_truth": false,
+      "note": "真实激光日志转为 ROS 1 bag；轮速不是独立真值"
+    },
+    "input_sha256": "26f282248b463bdd8689f2bb4f2ec4ed12e7a87e64c9e702be4ae173d0815283",
+    "input_bag": "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/results/public-bag/input.bag",
+    "map_sha256": "4c9e85918ef2c0e9cde72844aa69f07c40ce9320e1e37ed39cf64e85e77a669b"
+  },
+  "stages": [
+    {
+      "name": "input_preflight",
+      "status": "completed",
+      "elapsed_s": 0.07674037499999997,
+      "start_wall_s": 0.014926790999999995
+    },
+    {
+      "name": "mapping",
+      "status": "completed",
+      "elapsed_s": 0.6816343330000001,
+      "start_wall_s": 0.0920705
+    },
+    {
+      "name": "map_export",
+      "status": "completed",
+      "elapsed_s": 0.014922291999999837,
+      "start_wall_s": 0.774122708
+    },
+    {
+      "name": "evaluation",
+      "status": "completed",
+      "elapsed_s": 0.05110904199999999,
+      "start_wall_s": 0.789492958
+    }
+  ],
+  "artifacts": {
+    "trajectory": "estimated.tum",
+    "map": "map.yaml",
+    "input": "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/results/public-bag/input.bag"
+  },
+  "metrics": {
+    "trajectory": {
+      "alignment": "se3",
+      "scale_correction": false
+    }
+  },
+  "schema_version": 1,
+  "status": "insufficient",
+  "exit_code": 2,
+  "sections": {
+    "mapping": "insufficient",
+    "navigation": "insufficient",
+    "integration": "insufficient"
+  }
+}

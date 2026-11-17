@@ -1,0 +1,46 @@
+{
+  "name": "healthy",
+  "expected": "succeeded",
+  "action_status": "succeeded",
+  "final_pose": [
+    7.998810079711698,
+    -0.02718453100886735,
+    0.14158663546516198
+  ],
+  "goal": [
+    8,
+    0,
+    0
+  ],
+  "contacts": 0,
+  "contact_samples": 898,
+  "contact_coverage": 0.9987751238795166,
+  "contact_max_gap_s": 0.028999999999999915,
+  "contact_age_s": 0.01699999999999946,
+  "collision_geometries_observed": 4,
+  "duration_s": 17.961000000000002,
+  "timeout_s": 120,
+  "final_speed": 0.0,
+  "pose_age_s": 0.01699999999999946,
+  "map_sha256": "4a0c108583d83a23602309a24337dac43294f28464657459e248993b5fd099bb",
+  "temporary_block": false,
+  "block_observed": false,
+  "block_removed": false,
+  "resumed_after_removal": false,
+  "min_lidar_clearance_m": 1.045328130722046,
+  "window_s": [
+    2.816,
+    20.777
+  ],
+  "evidence": "generated/healthy/navigation.json",
+  "map_source": "generated",
+  "map_yaml": "/mnt/robot-validation/results/ros2-demo-001/map.yaml",
+  "world_sha256": "79ffaf4b39b349a9a6bcc47cb198387c5098f6a470431a4a3294c21e348e8290",
+  "initial_pose": [
+    -1.2652817737879976e-07,
+    1.1152276430840753e-12,
+    0
+  ],
+  "seed": 9999,
+  "nav_params_sha256": "00907f1d82dcaab4c05b5413720f76f66ba536baaa0792c85ccfa7ebcd4586da"
+}

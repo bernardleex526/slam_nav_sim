@@ -1,0 +1,17 @@
+[
+  {
+    "kind": "navigation_waypoint",
+    "time_s": 4.322,
+    "goal": [
+      8,
+      0,
+      0
+    ]
+  },
+  {
+    "kind": "action_request_timing",
+    "time_s": 4.322,
+    "goal_request_wall_s": 0.00012379200006762403,
+    "result_request_wall_s": 3.7916999872322776e-05
+  }
+]

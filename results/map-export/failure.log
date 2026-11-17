@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/src/robot_validate/runner.py", line 231, in worker
+    run_local(execution, request)
+  File "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/src/robot_validate/runner.py", line 164, in run_local
+    raise RuntimeError(
+RuntimeError: Injected map export failure after SLAM; partial trajectory retained

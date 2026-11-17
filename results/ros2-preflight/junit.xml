@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="demo" tests="1" failures="0" errors="1" skipped="0"><testcase name="ENVIRONMENT_PREFLIGHT_ERROR" classname="integration"><error message="FileNotFoundError: 缺少 ros2, gz；在 Ubuntu 24.04 / ROS 2 Jazzy 容器中运行 deploy/run.sh">None</error></testcase></testsuite>

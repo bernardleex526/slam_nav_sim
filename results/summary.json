@@ -1,0 +1,284 @@
+[
+  {
+    "case": "local-baseline",
+    "status": "pass",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "report": "local-baseline/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.10000000000000142,
+        "threshold": 0.5
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 66144,
+        "threshold": 100
+      },
+      {
+        "id": "ATE",
+        "status": "pass",
+        "value": 0.003443224418837764,
+        "threshold": 0.75
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.9423242379547689,
+        "threshold": 0.7
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "pass",
+        "value": 0.06356905795251468,
+        "threshold": 0.1
+      },
+      {
+        "id": "WALL_P95",
+        "status": "pass",
+        "value": 0.08000000000000007,
+        "threshold": 0.5
+      }
+    ]
+  },
+  {
+    "case": "public-bag",
+    "status": "insufficient",
+    "exit_code": 2,
+    "expected_exit": 2,
+    "report": "public-bag/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.26625900000004776,
+        "threshold": 0.5
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 78274,
+        "threshold": 100
+      },
+      {
+        "id": "ATE",
+        "status": "insufficient",
+        "value": null,
+        "threshold": null
+      }
+    ]
+  },
+  {
+    "case": "scan-gap",
+    "status": "fail",
+    "exit_code": 1,
+    "expected_exit": 1,
+    "report": "scan-gap/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "fail",
+        "value": 8.1,
+        "threshold": 0.5
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 81076,
+        "threshold": 100
+      },
+      {
+        "id": "ATE",
+        "status": "insufficient",
+        "value": 0.7507788161993769,
+        "threshold": 0.95
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.8315357669616519,
+        "threshold": 0.7
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "fail",
+        "value": 0.4689813632882308,
+        "threshold": 0.1
+      },
+      {
+        "id": "WALL_P95",
+        "status": "fail",
+        "value": 1.7635189351829015,
+        "threshold": 0.5
+      }
+    ]
+  },
+  {
+    "case": "odometry-bias",
+    "status": "pass",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "report": "odometry-bias/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.10000000000000142,
+        "threshold": 0.5
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 66184,
+        "threshold": 100
+      },
+      {
+        "id": "ATE",
+        "status": "pass",
+        "value": 0.0031381390390022713,
+        "threshold": 0.75
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.9426622418879056,
+        "threshold": 0.7
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "pass",
+        "value": 0.0643349502170028,
+        "threshold": 0.1
+      },
+      {
+        "id": "WALL_P95",
+        "status": "pass",
+        "value": 0.08000000000000007,
+        "threshold": 0.5
+      }
+    ]
+  },
+  {
+    "case": "no-truth",
+    "status": "insufficient",
+    "exit_code": 2,
+    "expected_exit": 2,
+    "report": "no-truth/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.10000000000000142,
+        "threshold": 0.5
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 66144,
+        "threshold": 100
+      },
+      {
+        "id": "ATE",
+        "status": "insufficient",
+        "value": null,
+        "threshold": null
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.9423242379547689,
+        "threshold": 0.7
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "pass",
+        "value": 0.06356905795251468,
+        "threshold": 0.1
+      },
+      {
+        "id": "WALL_P95",
+        "status": "pass",
+        "value": 0.08000000000000007,
+        "threshold": 0.5
+      }
+    ]
+  },
+  {
+    "case": "map-export",
+    "status": "fail",
+    "exit_code": 1,
+    "expected_exit": 1,
+    "report": "map-export/report.html",
+    "checks": [
+      {
+        "id": "MAP_EXPORT_ERROR",
+        "status": "fail",
+        "value": null,
+        "threshold": null
+      }
+    ]
+  },
+  {
+    "case": "legacy-rmhc",
+    "status": "fail",
+    "exit_code": 1,
+    "expected_exit": 1,
+    "report": "legacy-rmhc/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.10000000000000142,
+        "threshold": 0.5
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 67418,
+        "threshold": 100
+      },
+      {
+        "id": "ATE",
+        "status": "pass",
+        "value": 0.16069572488494105,
+        "threshold": 0.75
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.9196318829891839,
+        "threshold": 0.7
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "fail",
+        "value": 0.529997447025785,
+        "threshold": 0.1
+      },
+      {
+        "id": "WALL_P95",
+        "status": "fail",
+        "value": 1.0031948963187562,
+        "threshold": 0.5
+      }
+    ]
+  },
+  {
+    "case": "ros2-preflight",
+    "status": "environment_error",
+    "exit_code": 3,
+    "expected_exit": 3,
+    "report": "ros2-preflight/report.html",
+    "checks": [
+      {
+        "id": "ENVIRONMENT_PREFLIGHT_ERROR",
+        "status": "environment_error",
+        "value": null,
+        "threshold": null
+      }
+    ]
+  }
+]

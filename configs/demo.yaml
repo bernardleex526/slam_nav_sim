@@ -1,0 +1,16 @@
+name: demo
+seed: 9999
+thresholds:
+  max_scan_gap_s: 0.5
+  min_pair_coverage: 0.95
+  max_pair_dt_s: 0.03
+  ate_rmse_m: 0.75
+  map_coverage: 0.70
+  false_free_rate: 0.10
+  wall_p95_m: 0.50
+  position_m: 0.25
+  yaw_rad: 0.25
+ros:
+  loop_closing: true
+  settle_s: 3
+  replay_timeout_s: 600

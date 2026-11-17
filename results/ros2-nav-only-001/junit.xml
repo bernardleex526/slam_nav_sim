@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="healthy" tests="3" failures="0" errors="0" skipped="2"><testcase name="MAPPING_NOT_REQUESTED" classname="mapping"><skipped message="独立参考地图导航模式" /></testcase><testcase name="INTEGRATION_NOT_REQUESTED" classname="integration"><skipped message="独立参考地图导航模式" /></testcase><testcase name="REFERENCE_HEALTHY" classname="navigation" /></testsuite>

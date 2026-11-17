@@ -1,0 +1,232 @@
+{
+  "scenario": "demo",
+  "backend": "local",
+  "seed": 9999,
+  "checks": [
+    {
+      "id": "SCAN_GAP",
+      "section": "mapping",
+      "status": "fail",
+      "value": 8.1,
+      "threshold": 0.5,
+      "reason": "相邻估计位姿／扫描时间间隔",
+      "window_s": [
+        10.9,
+        19.0
+      ],
+      "evidence": [
+        "estimated.tum"
+      ],
+      "required": true
+    },
+    {
+      "id": "MAP_OUTPUT",
+      "section": "mapping",
+      "status": "pass",
+      "value": 81076,
+      "threshold": 100,
+      "reason": "可加载地图的已知栅格数",
+      "window_s": [],
+      "evidence": [
+        "map.yaml",
+        "map.pgm"
+      ],
+      "required": true
+    },
+    {
+      "id": "ATE",
+      "section": "mapping",
+      "status": "insufficient",
+      "value": 0.7507788161993769,
+      "threshold": 0.95,
+      "reason": "配对覆盖不足",
+      "window_s": [],
+      "evidence": [],
+      "required": true
+    },
+    {
+      "id": "MAP_COVERAGE",
+      "section": "mapping",
+      "status": "pass",
+      "value": 0.8315357669616519,
+      "threshold": 0.7,
+      "reason": "",
+      "window_s": [],
+      "evidence": [
+        "map.yaml",
+        "reference-map.yaml"
+      ],
+      "required": true
+    },
+    {
+      "id": "FALSE_FREE",
+      "section": "mapping",
+      "status": "fail",
+      "value": 0.4689813632882308,
+      "threshold": 0.1,
+      "reason": "未知区域不计作空闲区域",
+      "window_s": [],
+      "evidence": [],
+      "required": true
+    },
+    {
+      "id": "WALL_P95",
+      "section": "mapping",
+      "status": "fail",
+      "value": 1.7635189351829015,
+      "threshold": 0.5,
+      "reason": "双向墙体距离 95 分位；固定参考可观测范围",
+      "window_s": [],
+      "evidence": [],
+      "required": true
+    },
+    {
+      "id": "LOOP_EVIDENCE",
+      "section": "mapping",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "BreezySLAM 不提供回环候选／接受事件；不能据最终轨迹推断原因",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    },
+    {
+      "id": "NAV2_RUNTIME",
+      "section": "navigation",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "本地回归不运行 Nav2；需使用 ROS 2 后端",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    },
+    {
+      "id": "GENERATED_MAP_NAVIGATION",
+      "section": "integration",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "待 ROS 2 / Gazebo 环境验收",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    }
+  ],
+  "provenance": {
+    "started_utc": "2026-11-16T02:55:42.068303+00:00",
+    "platform": "macOS-26.7.3-arm64-arm-64bit",
+    "python": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+    "config": {
+      "thresholds": {
+        "max_scan_gap_s": 0.5,
+        "min_known_cells": 100,
+        "ate_rmse_m": 0.75,
+        "min_pair_coverage": 0.95,
+        "max_pair_dt_s": 0.03,
+        "map_coverage": 0.7,
+        "false_free_rate": 0.1,
+        "wall_p95_m": 0.5,
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02
+      },
+      "seed": 9999,
+      "algorithm": {
+        "local_matcher": "point_to_line"
+      }
+    },
+    "fault": "scan-gap",
+    "software": {
+      "numpy": "1.26.4",
+      "rosbags": "0.9.23",
+      "evo": "1.30.0",
+      "pytest": "8.3.5"
+    },
+    "dataset": {
+      "name": "deterministic 2D raycast",
+      "generator_seed": 391,
+      "truth_source": "independent geometric raycast simulator",
+      "independent_truth": true,
+      "scope": "建图工具本地回归；不是 Gazebo/Nav2 闭环验证"
+    },
+    "input_sha256": "18701bb1757c1f112d86a4948b0b79bc1043004048ce7963ce5b3061596c44d1",
+    "input_bag": "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/results/scan-gap/input.bag",
+    "local_algorithm": {
+      "pose_estimator": "point_to_line",
+      "map_engine": "BreezySLAM CoreSLAM",
+      "reference_inputs": false
+    },
+    "map_sha256": "3b7f8ce5d5e809bb5b0e72798c165d1353042259a9d1990561eec25af2265601"
+  },
+  "stages": [
+    {
+      "name": "input_preflight",
+      "status": "completed",
+      "elapsed_s": 0.07586516600000004,
+      "start_wall_s": 0.013466415999999981
+    },
+    {
+      "name": "mapping",
+      "status": "completed",
+      "elapsed_s": 0.13521799999999995,
+      "start_wall_s": 0.08972670799999999
+    },
+    {
+      "name": "map_export",
+      "status": "completed",
+      "elapsed_s": 0.00893933300000005,
+      "start_wall_s": 0.2252985
+    },
+    {
+      "name": "evaluation",
+      "status": "completed",
+      "elapsed_s": 0.08374395800000001,
+      "start_wall_s": 0.23464412500000004
+    }
+  ],
+  "artifacts": {
+    "mapping_diagnostics": "mapping-diagnostics.json",
+    "trajectory": "estimated.tum",
+    "map": "map.yaml",
+    "input": "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/results/scan-gap/input.bag"
+  },
+  "metrics": {
+    "trajectory": {
+      "alignment": "se3",
+      "scale_correction": false,
+      "reference_coverage": 0.7507788161993769,
+      "estimate_coverage": 1.0,
+      "matched_poses": 241,
+      "max_pair_dt_s": 0.03
+    },
+    "map": {
+      "coverage": 0.8315357669616519,
+      "false_free_rate": 0.4689813632882308,
+      "wall_p95_m": 1.7635189351829015,
+      "alignment": "declared map origins; no fitted map alignment",
+      "sample_resolution_m": 0.04,
+      "observable_cells": 65088,
+      "reference_origin": [
+        -1,
+        -1,
+        0
+      ],
+      "generated_origin": [
+        -14.02,
+        -14.02,
+        0
+      ]
+    }
+  },
+  "process_exit_code": null,
+  "schema_version": 1,
+  "status": "fail",
+  "exit_code": 1,
+  "sections": {
+    "mapping": "fail",
+    "navigation": "insufficient",
+    "integration": "insufficient"
+  }
+}

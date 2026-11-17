@@ -1,0 +1,7 @@
+{
+  "vm_status": "Stopped",
+  "vm_disk_retained": true,
+  "owned_process_groups_checked": 268,
+  "live_owned_ros_processes": 0,
+  "keep_awake_released": true
+}

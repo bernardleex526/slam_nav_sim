@@ -1,0 +1,22 @@
+name: custom-algorithm
+seed: 9999
+algorithm:
+  # ROS backend: replace this argv with your package launch. Must publish /map and map→base_link TF.
+  launch_argv: [ros2, launch, your_package, mapping.launch.py, "use_sim_time:=true"]
+ros:
+  loop_closing: true
+  settle_s: 5
+  replay_timeout_s: 600
+bag:
+  scan_topic: /scan
+  wheel_topic: /wheel_twist
+  laser:
+    size: 361
+    rate: 10
+    fov: 240
+    max_range: 12
+    margin: 8
+    offset: 0
+reference:
+  # A fused RTK input must not be declared independent evaluation truth.
+  independent: false

@@ -1,0 +1,203 @@
+[
+  {
+    "case": "local-baseline",
+    "status": "fail",
+    "exit_code": 1,
+    "report": "local-baseline/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.10000000000000142
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 66618
+      },
+      {
+        "id": "ATE",
+        "status": "pass",
+        "value": 0.16069572488494105
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.9115505162241888
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "fail",
+        "value": 0.5693132499361756
+      },
+      {
+        "id": "WALL_P95",
+        "status": "fail",
+        "value": 1.20066648158429
+      }
+    ]
+  },
+  {
+    "case": "public-bag",
+    "status": "insufficient",
+    "exit_code": 2,
+    "report": "public-bag/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.26625900000004776
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 121598
+      },
+      {
+        "id": "ATE",
+        "status": "insufficient",
+        "value": null
+      }
+    ]
+  },
+  {
+    "case": "scan-gap",
+    "status": "fail",
+    "exit_code": 1,
+    "report": "scan-gap/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "fail",
+        "value": 8.1
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 95521
+      },
+      {
+        "id": "ATE",
+        "status": "insufficient",
+        "value": 0.7507788161993769
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.8821749016715831
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "fail",
+        "value": 0.5945876946642839
+      },
+      {
+        "id": "WALL_P95",
+        "status": "fail",
+        "value": 1.9464840096954303
+      }
+    ]
+  },
+  {
+    "case": "odometry-bias",
+    "status": "fail",
+    "exit_code": 1,
+    "report": "odometry-bias/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.10000000000000142
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 91495
+      },
+      {
+        "id": "ATE",
+        "status": "fail",
+        "value": 0.983216579241697
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.8222867502458211
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "fail",
+        "value": 0.4947664028593311
+      },
+      {
+        "id": "WALL_P95",
+        "status": "fail",
+        "value": 2.514402154808981
+      }
+    ]
+  },
+  {
+    "case": "no-truth",
+    "status": "fail",
+    "exit_code": 1,
+    "report": "no-truth/report.html",
+    "checks": [
+      {
+        "id": "SCAN_GAP",
+        "status": "pass",
+        "value": 0.10000000000000142
+      },
+      {
+        "id": "MAP_OUTPUT",
+        "status": "pass",
+        "value": 66618
+      },
+      {
+        "id": "ATE",
+        "status": "insufficient",
+        "value": null
+      },
+      {
+        "id": "MAP_COVERAGE",
+        "status": "pass",
+        "value": 0.9115505162241888
+      },
+      {
+        "id": "FALSE_FREE",
+        "status": "fail",
+        "value": 0.5693132499361756
+      },
+      {
+        "id": "WALL_P95",
+        "status": "fail",
+        "value": 1.20066648158429
+      }
+    ]
+  },
+  {
+    "case": "map-export",
+    "status": "fail",
+    "exit_code": 1,
+    "report": "map-export/report.html",
+    "checks": [
+      {
+        "id": "MAP_EXPORT_ERROR",
+        "status": "fail",
+        "value": null
+      }
+    ]
+  },
+  {
+    "case": "ros2-preflight",
+    "status": "environment_error",
+    "exit_code": 3,
+    "report": "ros2-preflight/report.html",
+    "checks": [
+      {
+        "id": "ENVIRONMENT_PREFLIGHT_ERROR",
+        "status": "environment_error",
+        "value": null
+      }
+    ]
+  }
+]

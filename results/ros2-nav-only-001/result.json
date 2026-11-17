@@ -1,0 +1,127 @@
+{
+  "scenario": "healthy",
+  "backend": "ros2",
+  "seed": 9999,
+  "checks": [
+    {
+      "id": "MAPPING_NOT_REQUESTED",
+      "section": "mapping",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "独立参考地图导航模式",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    },
+    {
+      "id": "INTEGRATION_NOT_REQUESTED",
+      "section": "integration",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "独立参考地图导航模式",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    },
+    {
+      "id": "REFERENCE_HEALTHY",
+      "section": "navigation",
+      "status": "pass",
+      "value": {
+        "position_m": 0.06329822676538155,
+        "yaw_rad": 0.06251521198508607,
+        "contacts": 0,
+        "action_status": "succeeded",
+        "duration_s": 17.841,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 120
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        3.375,
+        21.216
+      ],
+      "evidence": [
+        "reference/healthy/navigation.json"
+      ],
+      "required": true
+    }
+  ],
+  "provenance": {
+    "started_utc": "2026-11-16T04:06:46.636466+00:00",
+    "platform": "Linux-6.8.0-147-generic-aarch64-with-glibc2.39",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "config": {
+      "name": "demo",
+      "seed": 9999,
+      "thresholds": {
+        "max_scan_gap_s": 0.5,
+        "min_known_cells": 100,
+        "ate_rmse_m": 0.75,
+        "min_pair_coverage": 0.95,
+        "max_pair_dt_s": 0.03,
+        "map_coverage": 0.7,
+        "false_free_rate": 0.1,
+        "wall_p95_m": 0.5,
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02
+      },
+      "ros": {
+        "loop_closing": true,
+        "settle_s": 3,
+        "replay_timeout_s": 600
+      }
+    },
+    "fault": "none",
+    "software": {
+      "numpy": "1.26.4",
+      "rosbags": "0.9.23",
+      "evo": "1.30.0",
+      "pytest": "8.3.5"
+    },
+    "world_sha256": "79ffaf4b39b349a9a6bcc47cb198387c5098f6a470431a4a3294c21e348e8290",
+    "nav_params_sha256": "00907f1d82dcaab4c05b5413720f76f66ba536baaa0792c85ccfa7ebcd4586da",
+    "slam_params_sha256": "17c3db9bcf9c33d354fc817958999387ddd82a517973bbc7354890d63329b74a",
+    "ROS_DISTRO": "jazzy",
+    "validation_level": "executed ROS 2 / Gazebo; see individual checks",
+    "isolation": {
+      "ROS_DOMAIN_ID": "40",
+      "ROS_LOCALHOST_ONLY": "1",
+      "GZ_PARTITION": "validation-1043573cab554410a7c7af485754f9fa"
+    }
+  },
+  "stages": [
+    {
+      "name": "environment_preflight",
+      "status": "completed",
+      "elapsed_s": 0.2659355269997832,
+      "start_wall_s": 0.005666831999860733
+    },
+    {
+      "name": "navigation_reference_healthy",
+      "status": "completed",
+      "elapsed_s": 25.848594640999636,
+      "start_wall_s": 0.28147204099968803
+    }
+  ],
+  "artifacts": {},
+  "metrics": {},
+  "process_exit_code": null,
+  "schema_version": 1,
+  "status": "pass",
+  "exit_code": 0,
+  "sections": {
+    "mapping": "insufficient",
+    "navigation": "pass",
+    "integration": "insufficient"
+  }
+}

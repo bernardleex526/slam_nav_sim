@@ -1,0 +1,54 @@
+{
+  "version": "0.1.3",
+  "source_commit": "37d620b0c659e7f9a94004a251d2896f7597049a",
+  "scope": "Source, packaging and prior evidence audit only; no SLAM/navigation execution or VM startup",
+  "wheel": {
+    "sha256": "eac721148e7317898fbd4613e96e2921d1e1a17339eb5d211f0677af6bb29f48",
+    "files": 25,
+    "package_files": [
+      "robot_validate/__init__.py",
+      "robot_validate/cli.py",
+      "robot_validate/data.py",
+      "robot_validate/evaluation_inputs.py",
+      "robot_validate/metrics.py",
+      "robot_validate/model.py",
+      "robot_validate/navigation_scenarios.py",
+      "robot_validate/process.py",
+      "robot_validate/pytest_plugin.py",
+      "robot_validate/report.py",
+      "robot_validate/ros_assets.py",
+      "robot_validate/ros_backend.py",
+      "robot_validate/ros_io.py",
+      "robot_validate/ros_probe.py",
+      "robot_validate/route_control.py",
+      "robot_validate/runner.py",
+      "robot_validate/scan_matcher.py",
+      "robot_validate/slam.py",
+      "robot_validate/temporary_block.py",
+      "robot_validate/worker.py"
+    ],
+    "resource_groups": {
+      "configs": false,
+      "deploy": false,
+      "third_party": false
+    },
+    "breezyslam_declared": false,
+    "entry_points": "[console_scripts]\nrobot-validate = robot_validate.cli:main\n\n[pytest11]\nrobot_validate = robot_validate.pytest_plugin\n"
+  },
+  "standalone_resources": {
+    "error": "FileNotFoundError",
+    "message": "Set ROBOT_VALIDATE_ROOT to the unpacked plugin source directory"
+  },
+  "existing_test_records": {
+    "linux": {
+      "tests": 74,
+      "failures": 0
+    },
+    "macos": {
+      "tests": 74,
+      "failures": 0
+    }
+  },
+  "source_zip_integrity": "verified SHA256 and ZIP CRC; 1975 entries",
+  "vm_status": "Stopped"
+}

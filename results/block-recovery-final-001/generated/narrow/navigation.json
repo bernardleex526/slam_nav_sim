@@ -1,0 +1,70 @@
+{
+  "name": "narrow",
+  "expected": "succeeded",
+  "action_status": "timeout",
+  "final_pose": [
+    7.083661440220831,
+    5.287513456333444,
+    1.3124593024948792
+  ],
+  "goal": [
+    7.2,
+    5.2,
+    1.57
+  ],
+  "contacts": 0,
+  "contact_samples": 6051,
+  "contact_coverage": 0.999917362201471,
+  "contact_max_gap_s": 0.022999999999999687,
+  "contact_age_s": 0.00899999999998613,
+  "collision_geometries_observed": 4,
+  "duration_s": 121.00999999999999,
+  "timeout_s": 120,
+  "final_speed": 0.0,
+  "pose_age_s": 0.00899999999998613,
+  "map_sha256": "08df9d1f217f3b50aee8b7cedec3c39ee1c1d5b7aefb50813bab4ada49788f05",
+  "temporary_block": false,
+  "block_observed": false,
+  "block_removed": false,
+  "resumed_after_removal": false,
+  "min_lidar_clearance_m": 0.09669648647308349,
+  "window_s": [
+    6.679,
+    127.689
+  ],
+  "evidence": "generated/narrow/navigation.json",
+  "waypoints": [
+    [
+      5.55,
+      1.6,
+      1.57
+    ],
+    [
+      5.55,
+      3.6,
+      1.57
+    ],
+    [
+      7.2,
+      5.2,
+      1.57
+    ]
+  ],
+  "narrow_corridor": {
+    "x_min": 5.15,
+    "x_max": 5.95,
+    "y_entry": 2.0,
+    "y_exit": 3.2
+  },
+  "corridor_crossed": true,
+  "map_source": "generated",
+  "map_yaml": "/mnt/robot-validation/results/block-recovery-final-001/map.yaml",
+  "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+  "initial_pose": [
+    -1.2652817737879976e-07,
+    1.1152276430840753e-12,
+    0
+  ],
+  "seed": 9999,
+  "nav_params_sha256": "cc89914c7002490f2a0b5dfb71c2511ca369c4430944282bc2c33cdb9d662757"
+}

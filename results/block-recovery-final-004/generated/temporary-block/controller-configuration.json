@@ -1,0 +1,8 @@
+{
+  "FollowPath.plugin": "nav2_rotation_shim_controller::RotationShimController",
+  "FollowPath.primary_controller": "nav2_mppi_controller::MPPIController",
+  "FollowPath.rotate_to_goal_heading": true,
+  "FollowPath.rotate_to_heading_once": true,
+  "general_goal_checker.xy_goal_tolerance": 0.25,
+  "general_goal_checker.yaw_goal_tolerance": 0.15
+}

@@ -1,9 +1,0 @@
-experiment,world,success,attempts,success_rate,mean_time,tracking_rmse,contacts,map_sha256
-b1_simple_smac2d_dwb,simple,5,5,1.0,15.04,0.1027,0,36cfd0a6679041c75eb2ffb8cb7070a68de89dd44f09cb1d2dbdab0918c6ef5a
-b2_simple_navfn_dwb,simple,5,5,1.0,14.92,0.0986,0,36cfd0a6679041c75eb2ffb8cb7070a68de89dd44f09cb1d2dbdab0918c6ef5a
-b3_simple_smachybrid_mppi,simple,2,5,0.4,22.2,0.1863,0,36cfd0a6679041c75eb2ffb8cb7070a68de89dd44f09cb1d2dbdab0918c6ef5a
-b4_simple_smac2d_rpp,simple,5,5,1.0,9.28,0.0904,0,36cfd0a6679041c75eb2ffb8cb7070a68de89dd44f09cb1d2dbdab0918c6ef5a
-b5_medium_smac2d_dwb,medium,1,5,0.2,107.82,0.1195,4,252b5e1913e117d62ef87e7f7d28bed192b87b9d66667270966fc7c63ad423ee
-b6_medium_smachybrid_mppi,medium,1,5,0.2,40.72,0.19,3,252b5e1913e117d62ef87e7f7d28bed192b87b9d66667270966fc7c63ad423ee
-b7_complex_smac2d_dwb,complex,5,5,1.0,23.18,0.083,0,4af2cb9b25db82fd3185ba83cffd462d5a08cf06e8f1cb2c330ea5ac58037025
-b8_complex_smachybrid_mppi,complex,3,5,0.6,23.56,0.0617,2,4af2cb9b25db82fd3185ba83cffd462d5a08cf06e8f1cb2c330ea5ac58037025

@@ -1,0 +1,17 @@
+{
+  "request": {
+    "mode": "sim",
+    "scenario": "healthy",
+    "backend": "ros2",
+    "fault": "none",
+    "bag": null,
+    "config_path": "demo.yaml"
+  },
+  "output": "../results/pytest-ros-healthy",
+  "timeout_s": 1800,
+  "expected_exit": 0,
+  "expected_checks": {
+    "REFERENCE_HEALTHY": "pass",
+    "GENERATED_HEALTHY": "pass"
+  }
+}

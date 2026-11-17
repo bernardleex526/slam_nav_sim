@@ -1,0 +1,53 @@
+{
+  "name": "healthy",
+  "expected": "succeeded",
+  "action_status": "succeeded",
+  "final_pose": [
+    7.87260409776005,
+    0.0035673648359747677,
+    0.057295118579684196
+  ],
+  "goal": [
+    8,
+    0,
+    0
+  ],
+  "contacts": 0,
+  "contact_samples": 884,
+  "contact_coverage": 0.9988122171945701,
+  "contact_max_gap_s": 0.02200000000000024,
+  "contact_age_s": 0.014000000000002899,
+  "collision_geometries_observed": 4,
+  "duration_s": 17.68,
+  "timeout_s": 120,
+  "final_speed": 0.0,
+  "pose_age_s": 0.014000000000002899,
+  "map_sha256": "dea85c67c648f3690bf619493c919c57d8526d0ba8716c1ed3ab671cda435e06",
+  "temporary_block": false,
+  "block_observed": false,
+  "block_removed": false,
+  "resumed_after_removal": false,
+  "min_lidar_clearance_m": 1.0395314598083496,
+  "window_s": [
+    4.554,
+    22.234
+  ],
+  "evidence": "reference/healthy/navigation.json",
+  "waypoints": [
+    [
+      8,
+      0,
+      0
+    ]
+  ],
+  "map_source": "reference",
+  "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/reference-map.yaml",
+  "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+  "initial_pose": [
+    -1.2652817737879976e-07,
+    1.1152276430840753e-12,
+    0
+  ],
+  "seed": 9999,
+  "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+}

@@ -1,0 +1,39 @@
+{
+  "unchanged": {
+    "input_bag_identical": true,
+    "reference_map_identical": true,
+    "thresholds_identical": true,
+    "reference_geometry_identical": true,
+    "scoring_code_identical": true
+  },
+  "metrics": [
+    {
+      "metric": "ATE",
+      "before": 0.16069572488494105,
+      "after": 0.003443224418837764,
+      "threshold": 0.75,
+      "status": "pass"
+    },
+    {
+      "metric": "MAP_COVERAGE",
+      "before": 0.9115505162241888,
+      "after": 0.9423242379547689,
+      "threshold": 0.7,
+      "status": "pass"
+    },
+    {
+      "metric": "FALSE_FREE",
+      "before": 0.5693132499361756,
+      "after": 0.06356905795251468,
+      "threshold": 0.1,
+      "status": "pass"
+    },
+    {
+      "metric": "WALL_P95",
+      "before": 1.20066648158429,
+      "after": 0.08000000000000007,
+      "threshold": 0.5,
+      "status": "pass"
+    }
+  ]
+}

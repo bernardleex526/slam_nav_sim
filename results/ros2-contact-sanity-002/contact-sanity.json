@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "world_sha256": "79ffaf4b39b349a9a6bcc47cb198387c5098f6a470431a4a3294c21e348e8290",
+  "isolation": {
+    "ROS_DOMAIN_ID": "40",
+    "ROS_LOCALHOST_ONLY": "1",
+    "GZ_PARTITION": "validation-8a2968e6adf64bf78295a49cec004f20"
+  },
+  "baseline_contacts": 0,
+  "observed_geometries": 4,
+  "baseline_samples": 70,
+  "injected_contact_count": 48,
+  "event_evidence": "events.json",
+  "final_samples": 75
+}

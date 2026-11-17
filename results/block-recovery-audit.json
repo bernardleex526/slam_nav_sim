@@ -1,0 +1,74 @@
+{
+  "acceptance_files_unchanged": true,
+  "source_map_bytes_identical": true,
+  "reference_map_bytes_identical": true,
+  "static_world_except_gate_identical": true,
+  "source_map_sha256": "ac287241f03a8dfd04ec2b5b98c8b6584fa2539bcd42c417ad72924b2d37fbd8",
+  "mapping_executed_this_run": false,
+  "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+  "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818",
+  "scenarios": [
+    {
+      "map_source": "reference",
+      "scenario": "healthy",
+      "contact_coverage": 0.9988122171945701,
+      "contact_max_gap_s": 0.02200000000000024,
+      "raw_telemetry_matches": true
+    },
+    {
+      "map_source": "reference",
+      "scenario": "temporary-block",
+      "contact_coverage": 0.9996150391376877,
+      "contact_max_gap_s": 0.16999999999999993,
+      "raw_telemetry_matches": true,
+      "stop_duration_s": 2.860000000000001,
+      "stop_speed_max_mps": 0.0061873744725167166,
+      "sequence_verified": true
+    },
+    {
+      "map_source": "reference",
+      "scenario": "unreachable",
+      "contact_coverage": 0.9990917347865576,
+      "contact_max_gap_s": 0.021000000000000796,
+      "raw_telemetry_matches": true
+    },
+    {
+      "map_source": "reference",
+      "scenario": "narrow",
+      "contact_coverage": 0.9995290793501296,
+      "contact_max_gap_s": 0.021000000000000796,
+      "raw_telemetry_matches": true
+    },
+    {
+      "map_source": "generated",
+      "scenario": "healthy",
+      "contact_coverage": 0.9991598991879025,
+      "contact_max_gap_s": 0.021999999999998465,
+      "raw_telemetry_matches": true
+    },
+    {
+      "map_source": "generated",
+      "scenario": "temporary-block",
+      "contact_coverage": 0.9988159675236807,
+      "contact_max_gap_s": 0.18900000000000006,
+      "raw_telemetry_matches": true,
+      "stop_duration_s": 2.84,
+      "stop_speed_max_mps": 0.007885655491223312,
+      "sequence_verified": true
+    },
+    {
+      "map_source": "generated",
+      "scenario": "unreachable",
+      "contact_coverage": 0.9989957185897774,
+      "contact_max_gap_s": 0.021000000000000796,
+      "raw_telemetry_matches": true
+    },
+    {
+      "map_source": "generated",
+      "scenario": "narrow",
+      "contact_coverage": 0.9991476725962994,
+      "contact_max_gap_s": 0.021000000000000796,
+      "raw_telemetry_matches": true
+    }
+  ]
+}

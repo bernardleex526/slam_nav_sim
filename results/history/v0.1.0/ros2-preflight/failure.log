@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/src/robot_validate/runner.py", line 230, in worker
+    run_ros(execution, request)
+  File "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/src/robot_validate/ros_backend.py", line 82, in run_ros
+    raise FileNotFoundError(
+FileNotFoundError: 缺少 ros2, gz；在 Ubuntu 24.04 / ROS 2 Jazzy 容器中运行 deploy/run.sh

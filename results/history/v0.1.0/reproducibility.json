@@ -1,0 +1,28 @@
+{
+  "scope": "same macOS host; same fixed raycast input, different RMHC algorithm seeds",
+  "same_seed_map_identical": true,
+  "same_seed_trajectory_identical": true,
+  "runs": [
+    {
+      "seed": 9999,
+      "status": "fail",
+      "ate_rmse_m": 0.16069572488494105,
+      "map_sha256": "653ac2d7d6e7b8150a4fa23943598b3a792983e0c3a6549722b9f831f6b332b1",
+      "trajectory_sha256": "a9658237335bf4549319e881298b53c171bc6cbf3226cab52d131aeb7b991dba"
+    },
+    {
+      "seed": 10001,
+      "status": "fail",
+      "ate_rmse_m": 0.1843720291513617,
+      "map_sha256": "2642cbfc7be84b91cae82b4ae65d364e62d5f381f1f8cd109b5ef50f0d78934e",
+      "trajectory_sha256": "483f723052907f0fef437344be6ee86e374641837f4253506216f6bc225bdfbb"
+    },
+    {
+      "seed": 10007,
+      "status": "fail",
+      "ate_rmse_m": 0.15747349550273038,
+      "map_sha256": "4e8a394d4e1a5cd05d4df04bbf7a4c636de0b044bad371f50fbeaca73293faa0",
+      "trajectory_sha256": "95e45076db27c187a02b68e9d56502f9fcbcb0f8b00cd73b14ae85c74ecf5e86"
+    }
+  ]
+}

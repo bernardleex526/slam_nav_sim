@@ -1,0 +1,38 @@
+{
+  "scope": "same fixed world; sensor noise seeds 614 and1009 were held out during initial diagnosis; not new-world generalization",
+  "runs": [
+    {
+      "sensor_noise_seed": 391,
+      "input_sha256": "f76e2220228ad0a802b6d818a73ebc499e290b371d71365ec45135b9d2978f31",
+      "ate_rmse_m": 0.003443224418837764,
+      "coverage": 0.9423242379547689,
+      "false_free_rate": 0.06356905795251468,
+      "wall_p95_m": 0.08000000000000007,
+      "all_map_gates_pass": true,
+      "map_sha256": "f12cd790d0ee306197e7e507682855f73f08d30c955f457adfec719fbd951025",
+      "trajectory_sha256": "c66479b507f60bedc4b15828e0bf16127923bf13c87f608ee5ec7f8b6a67303f"
+    },
+    {
+      "sensor_noise_seed": 614,
+      "input_sha256": "edb343ae70a42f0849a075408589c3ded4a534d61ad384e396dd5d9931c97e3c",
+      "ate_rmse_m": 0.0033148330016702777,
+      "coverage": 0.9422166912487709,
+      "false_free_rate": 0.06407965279550676,
+      "wall_p95_m": 0.08000000000000007,
+      "all_map_gates_pass": true,
+      "map_sha256": "c75c83c8736b28220cb72b09ecebb79c23f9d57a2285e73f8aa66a3d16fa2ff4",
+      "trajectory_sha256": "bf796a7c97d5110ba46458e18c1bb82550fa98b6cd2e75940efb7add38f71893"
+    },
+    {
+      "sensor_noise_seed": 1009,
+      "input_sha256": "5d2c3fcce06acb883fd37dbbc4eeb06cabaaac2cab8a05870228cbf24e90b7b0",
+      "ate_rmse_m": 0.0037172631662509546,
+      "coverage": 0.9422781465093412,
+      "false_free_rate": 0.06535613990298698,
+      "wall_p95_m": 0.08000000000000007,
+      "all_map_gates_pass": true,
+      "map_sha256": "bbe91b6238e03953852ce1cdf682e98c149e5a1eace79ebe8db421fc706ef3b7",
+      "trajectory_sha256": "2e26716c4910e2d889d132e3af5e537074b0be9ac6a8c8cb49a1241f118745d3"
+    }
+  ]
+}

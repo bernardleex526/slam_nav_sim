@@ -1,0 +1,27 @@
+{
+  "request": {
+    "mode": "sim",
+    "scenario": "demo",
+    "backend": "ros2",
+    "fault": "none",
+    "bag": null,
+    "config_path": "demo.yaml",
+    "navigation_only": true,
+    "generated_map": "../results/ros2-demo-005/map.yaml"
+  },
+  "output": "../results/block-recovery-final-004",
+  "timeout_s": 1800,
+  "expected_exit": 0,
+  "expected_checks": {
+    "REFERENCE_HEALTHY": "pass",
+    "REFERENCE_TEMPORARY-BLOCK": "pass",
+    "REFERENCE_UNREACHABLE": "pass",
+    "REFERENCE_NARROW": "pass",
+    "REFERENCE_NARROW_COVERAGE": "pass",
+    "GENERATED_HEALTHY": "pass",
+    "GENERATED_TEMPORARY-BLOCK": "pass",
+    "GENERATED_UNREACHABLE": "pass",
+    "GENERATED_NARROW": "pass",
+    "GENERATED_NARROW_COVERAGE": "pass"
+  }
+}

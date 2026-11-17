@@ -1,0 +1,64 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SLAM 验证 · demo</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5f7;color:#1e3040;font:15px system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:42px 28px}h1{font-size:32px;margin:8px 0}h2{font-size:21px;margin-top:30px}.eyebrow{letter-spacing:2px;font-size:12px;color:#597286}.meta{color:#536a7b;line-height:1.8}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}.card{background:white;border-radius:10px;padding:20px;border-top:4px solid #94a3b8}.card span{display:block;color:#52667a}.card strong{display:block;font-size:25px;margin-top:8px}.pass{border-color:#18876d}.fail{border-color:#ce4f36}.insufficient{border-color:#cf9a2e}.environment_error{border-color:#8a61ad}.panel{background:white;border-radius:12px;padding:24px;margin-top:18px}svg{width:100%;height:auto;border:1px solid #e4eaf0}.check{border-left:4px solid;margin:9px 0;background:#f8fafc;padding:12px 16px;border-radius:4px}summary{cursor:pointer}summary span{float:right}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 ui-monospace,monospace;background:#edf2f6;padding:14px;border-radius:6px}a{color:#096ba4}button{padding:7px 13px;background:#fff;border:1px solid #b6c4d0;border-radius:5px;cursor:pointer}label{margin-right:18px}.legend{color:#546b7b;line-height:2}@media(max-width:650px){main{padding:20px 12px}.cards{grid-template-columns:1fr}summary span{float:none;display:block}}
+</style><main><div class="eyebrow">ROBOT VALIDATION / EVIDENCE REPORT</div><h1>demo · 失败</h1>
+<p class="meta">后端：local · 随机种子：9999 · <a href="result.json">JSON</a> · <a href="junit.xml">JUnit XML</a><br>本地射线示例仅验证建图与评估工具。ROS 2 / Gazebo 闭环验收以对应后端的实际证据为准。</p>
+<div class="cards"><div class="card fail"><span>建图</span><strong>失败</strong></div><div class="card insufficient"><span>导航</span><strong>证据不足</strong></div><div class="card insufficient"><span>系统集成</span><strong>证据不足</strong></div></div><section class="panel"><h2>地图与轨迹</h2><div class="legend">深灰：生成地图障碍 · 青色：参考墙体 · 橙色：算法轨迹 · 蓝色：独立真值</div>
+<p><label><input type="checkbox" checked onchange="document.querySelectorAll('.reference').forEach(x=>x.style.display=this.checked?'':'none')">参考地图</label><label><input type="checkbox" checked onchange="document.querySelectorAll('.truth').forEach(x=>x.style.display=this.checked?'':'none')">参考轨迹</label></p><p>本阶段未生成可显示的地图。查看阶段记录与日志。</p></section>
+
+<section class="panel"><h2>验收明细</h2><button onclick="document.querySelectorAll('.check').forEach(x=>x.hidden=x.dataset.state==='pass')">只看未通过项</button> <button onclick="document.querySelectorAll('.check').forEach(x=>x.hidden=false)">显示全部</button><details class="check fail" data-state="fail"><summary><b>MAP_EXPORT_ERROR</b><span>失败</span></summary><p>RuntimeError: Injected map export failure after SLAM; partial trajectory retained</p><pre>实测值: null
+阈值: null
+时间（秒）: [
+  0.486182542
+]</pre><p><a href="failure.log">failure.log</a></p></details></section>
+<section class="panel"><h2>阶段与故障时间</h2><ol><li><b>input_preflight</b> · completed · 0.08s</li><li><b>mapping</b> · completed · 0.39s</li><li><b>map_export</b> · failed · 0.00s</li></ol><details><summary>指标与对齐信息</summary><pre>{}</pre></details><details><summary>来源与运行条件</summary><pre>{
+  &quot;started_utc&quot;: &quot;2026-11-16T02:55:45.072482+00:00&quot;,
+  &quot;platform&quot;: &quot;macOS-26.7.3-arm64-arm-64bit&quot;,
+  &quot;python&quot;: &quot;3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]&quot;,
+  &quot;config&quot;: {
+    &quot;thresholds&quot;: {
+      &quot;max_scan_gap_s&quot;: 0.5,
+      &quot;min_known_cells&quot;: 100,
+      &quot;ate_rmse_m&quot;: 0.75,
+      &quot;min_pair_coverage&quot;: 0.95,
+      &quot;max_pair_dt_s&quot;: 0.03,
+      &quot;map_coverage&quot;: 0.7,
+      &quot;false_free_rate&quot;: 0.1,
+      &quot;wall_p95_m&quot;: 0.5,
+      &quot;position_m&quot;: 0.25,
+      &quot;yaw_rad&quot;: 0.25,
+      &quot;stop_speed_mps&quot;: 0.02
+    },
+    &quot;seed&quot;: 9999,
+    &quot;algorithm&quot;: {
+      &quot;local_matcher&quot;: &quot;point_to_line&quot;
+    }
+  },
+  &quot;fault&quot;: &quot;map-export&quot;,
+  &quot;software&quot;: {
+    &quot;numpy&quot;: &quot;1.26.4&quot;,
+    &quot;rosbags&quot;: &quot;0.9.23&quot;,
+    &quot;evo&quot;: &quot;1.30.0&quot;,
+    &quot;pytest&quot;: &quot;8.3.5&quot;
+  },
+  &quot;dataset&quot;: {
+    &quot;name&quot;: &quot;deterministic 2D raycast&quot;,
+    &quot;generator_seed&quot;: 391,
+    &quot;truth_source&quot;: &quot;independent geometric raycast simulator&quot;,
+    &quot;independent_truth&quot;: true,
+    &quot;scope&quot;: &quot;建图工具本地回归；不是 Gazebo/Nav2 闭环验证&quot;
+  },
+  &quot;input_sha256&quot;: &quot;f76e2220228ad0a802b6d818a73ebc499e290b371d71365ec45135b9d2978f31&quot;,
+  &quot;input_bag&quot;: &quot;/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/results/map-export/input.bag&quot;,
+  &quot;local_algorithm&quot;: {
+    &quot;pose_estimator&quot;: &quot;point_to_line&quot;,
+    &quot;map_engine&quot;: &quot;BreezySLAM CoreSLAM&quot;,
+    &quot;reference_inputs&quot;: false
+  }
+}</pre></details><details><summary>failure.log</summary><pre>Traceback (most recent call last):
+  File &quot;/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/src/robot_validate/runner.py&quot;, line 231, in worker
+    run_local(execution, request)
+  File &quot;/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/src/robot_validate/runner.py&quot;, line 164, in run_local
+    raise RuntimeError(
+RuntimeError: Injected map export failure after SLAM; partial trajectory retained
+</pre></details><details><summary>logs/worker.log</summary><pre></pre></details></section></main></html>

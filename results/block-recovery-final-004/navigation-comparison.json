@@ -1,0 +1,500 @@
+[
+  {
+    "name": "healthy",
+    "expected": "succeeded",
+    "action_status": "succeeded",
+    "final_pose": [
+      7.87260409776005,
+      0.0035673648359747677,
+      0.057295118579684196
+    ],
+    "goal": [
+      8,
+      0,
+      0
+    ],
+    "contacts": 0,
+    "contact_samples": 884,
+    "contact_coverage": 0.9988122171945701,
+    "contact_max_gap_s": 0.02200000000000024,
+    "contact_age_s": 0.014000000000002899,
+    "collision_geometries_observed": 4,
+    "duration_s": 17.68,
+    "timeout_s": 120,
+    "final_speed": 0.0,
+    "pose_age_s": 0.014000000000002899,
+    "map_sha256": "dea85c67c648f3690bf619493c919c57d8526d0ba8716c1ed3ab671cda435e06",
+    "temporary_block": false,
+    "block_observed": false,
+    "block_removed": false,
+    "resumed_after_removal": false,
+    "min_lidar_clearance_m": 1.0395314598083496,
+    "window_s": [
+      4.554,
+      22.234
+    ],
+    "evidence": "reference/healthy/navigation.json",
+    "waypoints": [
+      [
+        8,
+        0,
+        0
+      ]
+    ],
+    "map_source": "reference",
+    "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/reference-map.yaml",
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "initial_pose": [
+      -1.2652817737879976e-07,
+      1.1152276430840753e-12,
+      0
+    ],
+    "seed": 9999,
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+  },
+  {
+    "name": "temporary-block",
+    "expected": "succeeded",
+    "action_status": "succeeded",
+    "final_pose": [
+      7.868122608744805,
+      0.055129943812968506,
+      0.002145355125944435
+    ],
+    "goal": [
+      8,
+      0,
+      0
+    ],
+    "contacts": 0,
+    "contact_samples": 1552,
+    "contact_coverage": 0.9996150391376877,
+    "contact_max_gap_s": 0.16999999999999993,
+    "contact_age_s": 0.0,
+    "collision_geometries_observed": 4,
+    "duration_s": 31.172000000000004,
+    "timeout_s": 120,
+    "final_speed": 0.0,
+    "pose_age_s": 0.020000000000003126,
+    "map_sha256": "dea85c67c648f3690bf619493c919c57d8526d0ba8716c1ed3ab671cda435e06",
+    "temporary_block": true,
+    "block_observed": true,
+    "block_removed": true,
+    "resumed_after_removal": true,
+    "min_lidar_clearance_m": 0.1269335949420929,
+    "window_s": [
+      5.208,
+      36.38
+    ],
+    "evidence": "reference/temporary-block/navigation.json",
+    "waypoints": [
+      [
+        8,
+        0,
+        0
+      ]
+    ],
+    "block_episode": {
+      "inserted_s": 10.472,
+      "removal_requested_s": 13.463,
+      "removed_s": 13.728,
+      "observed": true,
+      "resumed": true,
+      "stop_interval_s": [
+        10.6,
+        13.46
+      ],
+      "resumed_at_s": 24.22,
+      "stopped_pose": [
+        2.3378207852257415,
+        0.028326460207646283
+      ],
+      "passed_gate_at_s": 26.4,
+      "resumed_x": 2.4439166179530956,
+      "scheduling_source": "AMCL map TF + wheel odometry",
+      "evaluation_source": "independent Gazebo ground truth"
+    },
+    "map_source": "reference",
+    "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/reference-map.yaml",
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "initial_pose": [
+      -1.2652817737879976e-07,
+      1.1152276430840753e-12,
+      0
+    ],
+    "seed": 9999,
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+  },
+  {
+    "name": "unreachable",
+    "expected": "controlled_failure",
+    "action_status": "aborted",
+    "final_pose": [
+      0.09836390901027785,
+      -0.2999931610361148,
+      -2.5151041763379083
+    ],
+    "goal": [
+      3,
+      2,
+      0
+    ],
+    "contacts": 0,
+    "contact_samples": 936,
+    "contact_coverage": 0.9990917347865576,
+    "contact_max_gap_s": 0.021000000000000796,
+    "contact_age_s": 0.010000000000001563,
+    "collision_geometries_observed": 4,
+    "duration_s": 18.717000000000002,
+    "timeout_s": 60,
+    "final_speed": 0.0,
+    "pose_age_s": 0.010000000000001563,
+    "map_sha256": "dea85c67c648f3690bf619493c919c57d8526d0ba8716c1ed3ab671cda435e06",
+    "temporary_block": false,
+    "block_observed": false,
+    "block_removed": false,
+    "resumed_after_removal": false,
+    "min_lidar_clearance_m": 0.6133885884284973,
+    "window_s": [
+      4.653,
+      23.37
+    ],
+    "evidence": "reference/unreachable/navigation.json",
+    "waypoints": [
+      [
+        3,
+        2,
+        0
+      ]
+    ],
+    "map_source": "reference",
+    "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/reference-map.yaml",
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "initial_pose": [
+      -1.2652817737879976e-07,
+      1.1152276430840753e-12,
+      0
+    ],
+    "seed": 9999,
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+  },
+  {
+    "name": "narrow",
+    "expected": "succeeded",
+    "action_status": "succeeded",
+    "final_pose": [
+      7.013092953529049,
+      5.062028955298274,
+      1.6225687466235044
+    ],
+    "goal": [
+      7.2,
+      5.2,
+      1.57
+    ],
+    "contacts": 0,
+    "contact_samples": 1699,
+    "contact_coverage": 0.9995290793501296,
+    "contact_max_gap_s": 0.021000000000000796,
+    "contact_age_s": 0.009000000000000341,
+    "collision_geometries_observed": 4,
+    "duration_s": 33.976,
+    "timeout_s": 120,
+    "final_speed": 0.0,
+    "pose_age_s": 0.009000000000000341,
+    "map_sha256": "dea85c67c648f3690bf619493c919c57d8526d0ba8716c1ed3ab671cda435e06",
+    "temporary_block": false,
+    "block_observed": false,
+    "block_removed": false,
+    "resumed_after_removal": false,
+    "min_lidar_clearance_m": 0.0888050103187561,
+    "window_s": [
+      6.613,
+      40.589
+    ],
+    "evidence": "reference/narrow/navigation.json",
+    "waypoints": [
+      [
+        5.55,
+        1.6,
+        1.57
+      ],
+      [
+        5.55,
+        3.6,
+        1.57
+      ],
+      [
+        7.2,
+        5.2,
+        1.57
+      ]
+    ],
+    "narrow_corridor": {
+      "x_min": 5.15,
+      "x_max": 5.95,
+      "y_entry": 2.0,
+      "y_exit": 3.2
+    },
+    "corridor_crossed": true,
+    "map_source": "reference",
+    "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/reference-map.yaml",
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "initial_pose": [
+      -1.2652817737879976e-07,
+      1.1152276430840753e-12,
+      0
+    ],
+    "seed": 9999,
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+  },
+  {
+    "name": "healthy",
+    "expected": "succeeded",
+    "action_status": "succeeded",
+    "final_pose": [
+      7.997465001904771,
+      -0.013503737427203136,
+      -0.07166749442842453
+    ],
+    "goal": [
+      8,
+      0,
+      0
+    ],
+    "contacts": 0,
+    "contact_samples": 893,
+    "contact_coverage": 0.9991598991879025,
+    "contact_max_gap_s": 0.021999999999998465,
+    "contact_age_s": 0.0,
+    "collision_geometries_observed": 4,
+    "duration_s": 17.855,
+    "timeout_s": 120,
+    "final_speed": 0.0,
+    "pose_age_s": 0.0,
+    "map_sha256": "ac287241f03a8dfd04ec2b5b98c8b6584fa2539bcd42c417ad72924b2d37fbd8",
+    "temporary_block": false,
+    "block_observed": false,
+    "block_removed": false,
+    "resumed_after_removal": false,
+    "min_lidar_clearance_m": 1.045328130722046,
+    "window_s": [
+      4.805,
+      22.66
+    ],
+    "evidence": "generated/healthy/navigation.json",
+    "waypoints": [
+      [
+        8,
+        0,
+        0
+      ]
+    ],
+    "map_source": "generated",
+    "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/map.yaml",
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "initial_pose": [
+      -1.2652817737879976e-07,
+      1.1152276430840753e-12,
+      0
+    ],
+    "seed": 9999,
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+  },
+  {
+    "name": "temporary-block",
+    "expected": "succeeded",
+    "action_status": "succeeded",
+    "final_pose": [
+      8.026894466581501,
+      0.03084946621533163,
+      -0.0006036382218333181
+    ],
+    "goal": [
+      8,
+      0,
+      0
+    ],
+    "contacts": 0,
+    "contact_samples": 1175,
+    "contact_coverage": 0.9988159675236807,
+    "contact_max_gap_s": 0.18900000000000006,
+    "contact_age_s": 0.015999999999998238,
+    "collision_geometries_observed": 4,
+    "duration_s": 23.648,
+    "timeout_s": 120,
+    "final_speed": 0.0,
+    "pose_age_s": 0.015999999999998238,
+    "map_sha256": "ac287241f03a8dfd04ec2b5b98c8b6584fa2539bcd42c417ad72924b2d37fbd8",
+    "temporary_block": true,
+    "block_observed": true,
+    "block_removed": true,
+    "resumed_after_removal": true,
+    "min_lidar_clearance_m": 0.10503687500953673,
+    "window_s": [
+      4.508,
+      28.156
+    ],
+    "evidence": "generated/temporary-block/navigation.json",
+    "waypoints": [
+      [
+        8,
+        0,
+        0
+      ]
+    ],
+    "block_episode": {
+      "inserted_s": 9.67,
+      "removal_requested_s": 12.663,
+      "removed_s": 12.93,
+      "observed": true,
+      "resumed": true,
+      "stop_interval_s": [
+        9.82,
+        12.66
+      ],
+      "resumed_at_s": 15.7,
+      "stopped_pose": [
+        2.359071702732462,
+        -0.0039360125450456866
+      ],
+      "passed_gate_at_s": 17.82,
+      "resumed_x": 2.4675412306476647,
+      "scheduling_source": "AMCL map TF + wheel odometry",
+      "evaluation_source": "independent Gazebo ground truth"
+    },
+    "map_source": "generated",
+    "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/map.yaml",
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "initial_pose": [
+      -1.2652817737879976e-07,
+      1.1152276430840753e-12,
+      0
+    ],
+    "seed": 9999,
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+  },
+  {
+    "name": "unreachable",
+    "expected": "controlled_failure",
+    "action_status": "aborted",
+    "final_pose": [
+      0.09835770092560676,
+      -0.29954950628542676,
+      -2.5092800399225057
+    ],
+    "goal": [
+      3,
+      2,
+      0
+    ],
+    "contacts": 0,
+    "contact_samples": 946,
+    "contact_coverage": 0.9989957185897774,
+    "contact_max_gap_s": 0.021000000000000796,
+    "contact_age_s": 0.01600000000000179,
+    "collision_geometries_observed": 4,
+    "duration_s": 18.919,
+    "timeout_s": 60,
+    "final_speed": 0.0,
+    "pose_age_s": 0.01600000000000179,
+    "map_sha256": "ac287241f03a8dfd04ec2b5b98c8b6584fa2539bcd42c417ad72924b2d37fbd8",
+    "temporary_block": false,
+    "block_observed": false,
+    "block_removed": false,
+    "resumed_after_removal": false,
+    "min_lidar_clearance_m": 0.6136971616744995,
+    "window_s": [
+      4.977,
+      23.896
+    ],
+    "evidence": "generated/unreachable/navigation.json",
+    "waypoints": [
+      [
+        3,
+        2,
+        0
+      ]
+    ],
+    "map_source": "generated",
+    "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/map.yaml",
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "initial_pose": [
+      -1.2652817737879976e-07,
+      1.1152276430840753e-12,
+      0
+    ],
+    "seed": 9999,
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+  },
+  {
+    "name": "narrow",
+    "expected": "succeeded",
+    "action_status": "succeeded",
+    "final_pose": [
+      7.047072386044516,
+      5.0628807217019425,
+      1.652601513286086
+    ],
+    "goal": [
+      7.2,
+      5.2,
+      1.57
+    ],
+    "contacts": 0,
+    "contact_samples": 1818,
+    "contact_coverage": 0.9991476725962994,
+    "contact_max_gap_s": 0.021000000000000796,
+    "contact_age_s": 0.016999999999995907,
+    "collision_geometries_observed": 4,
+    "duration_s": 36.370999999999995,
+    "timeout_s": 120,
+    "final_speed": 0.0,
+    "pose_age_s": 0.016999999999995907,
+    "map_sha256": "ac287241f03a8dfd04ec2b5b98c8b6584fa2539bcd42c417ad72924b2d37fbd8",
+    "temporary_block": false,
+    "block_observed": false,
+    "block_removed": false,
+    "resumed_after_removal": false,
+    "min_lidar_clearance_m": 0.08709501266479491,
+    "window_s": [
+      3.346,
+      39.717
+    ],
+    "evidence": "generated/narrow/navigation.json",
+    "waypoints": [
+      [
+        5.55,
+        1.6,
+        1.57
+      ],
+      [
+        5.55,
+        3.6,
+        1.57
+      ],
+      [
+        7.2,
+        5.2,
+        1.57
+      ]
+    ],
+    "narrow_corridor": {
+      "x_min": 5.15,
+      "x_max": 5.95,
+      "y_entry": 2.0,
+      "y_exit": 3.2
+    },
+    "corridor_crossed": true,
+    "map_source": "generated",
+    "map_yaml": "/mnt/robot-validation/results/block-recovery-final-004/map.yaml",
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "initial_pose": [
+      -1.2652817737879976e-07,
+      1.1152276430840753e-12,
+      0
+    ],
+    "seed": 9999,
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818"
+  }
+]

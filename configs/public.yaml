@@ -1,0 +1,14 @@
+name: public-exp2
+seed: 9999
+bag:
+  scan_topic: /scan
+  wheel_topic: /wheel_twist
+  laser:
+    size: 682
+    rate: 10
+    fov: 240
+    max_range: 4
+    margin: 70
+    offset: 0.145
+reference:
+  independent: false

@@ -1,0 +1,53 @@
+{
+  "name": "unreachable",
+  "expected": "controlled_failure",
+  "action_status": "aborted",
+  "final_pose": [
+    0.09943999614843657,
+    -0.298574067011813,
+    -2.500450574509159
+  ],
+  "goal": [
+    3,
+    2,
+    0
+  ],
+  "contacts": 0,
+  "contact_samples": 944,
+  "contact_coverage": 0.9989935907622225,
+  "contact_max_gap_s": 0.020000000000003126,
+  "contact_age_s": 0.01600000000000179,
+  "collision_geometries_observed": 4,
+  "duration_s": 18.879,
+  "timeout_s": 60,
+  "final_speed": 0.0,
+  "pose_age_s": 0.01600000000000179,
+  "map_sha256": "dea85c67c648f3690bf619493c919c57d8526d0ba8716c1ed3ab671cda435e06",
+  "temporary_block": false,
+  "block_observed": false,
+  "block_removed": false,
+  "resumed_after_removal": false,
+  "min_lidar_clearance_m": 0.6150630617141724,
+  "window_s": [
+    4.497,
+    23.376
+  ],
+  "evidence": "reference/unreachable/navigation.json",
+  "waypoints": [
+    [
+      3,
+      2,
+      0
+    ]
+  ],
+  "map_source": "reference",
+  "map_yaml": "/mnt/robot-validation/results/ros2-demo-005/reference-map.yaml",
+  "world_sha256": "79ffaf4b39b349a9a6bcc47cb198387c5098f6a470431a4a3294c21e348e8290",
+  "initial_pose": [
+    -1.2652817737879976e-07,
+    1.1152276430840753e-12,
+    0
+  ],
+  "seed": 9999,
+  "nav_params_sha256": "906200f686cd9e93e09b38592d4c8929b23312fac7f485c06660a83f4a597898"
+}

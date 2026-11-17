@@ -1,0 +1,47 @@
+[
+  {
+    "kind": "navigation_waypoint",
+    "time_s": 5.167,
+    "goal": [
+      5.55,
+      1.6,
+      1.57
+    ]
+  },
+  {
+    "kind": "action_request_timing",
+    "time_s": 5.167,
+    "goal_request_wall_s": 8.25830002213479e-05,
+    "result_request_wall_s": 2.605499958008295e-05
+  },
+  {
+    "kind": "navigation_waypoint",
+    "time_s": 23.29,
+    "goal": [
+      5.55,
+      3.6,
+      1.57
+    ]
+  },
+  {
+    "kind": "action_request_timing",
+    "time_s": 23.29,
+    "goal_request_wall_s": 5.8738000006997027e-05,
+    "result_request_wall_s": 3.393400038476102e-05
+  },
+  {
+    "kind": "navigation_waypoint",
+    "time_s": 28.975,
+    "goal": [
+      7.2,
+      5.2,
+      1.57
+    ]
+  },
+  {
+    "kind": "action_request_timing",
+    "time_s": 28.975,
+    "goal_request_wall_s": 8.30409999252879e-05,
+    "result_request_wall_s": 2.9472999813151546e-05
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "source": "reference",
+    "scenario": "healthy",
+    "coverage": 0.9989289136929927,
+    "max_gap_s": 0.021000000000000796,
+    "age_s": 0.006000000000000227,
+    "geometries": 4,
+    "raw_recomputation_matches": true,
+    "evidence": "ros2-demo-005/reference/healthy/contact-telemetry.json"
+  },
+  {
+    "source": "reference",
+    "scenario": "temporary-block",
+    "coverage": 0.9976398859278197,
+    "max_gap_s": 0.18900000000000006,
+    "age_s": 0.015999999999998238,
+    "geometries": 4,
+    "raw_recomputation_matches": true,
+    "evidence": "ros2-demo-005/reference/temporary-block/contact-telemetry.json"
+  },
+  {
+    "source": "reference",
+    "scenario": "unreachable",
+    "coverage": 0.9989935907622225,
+    "max_gap_s": 0.020000000000003126,
+    "age_s": 0.01600000000000179,
+    "geometries": 4,
+    "raw_recomputation_matches": true,
+    "evidence": "ros2-demo-005/reference/unreachable/contact-telemetry.json"
+  },
+  {
+    "source": "reference",
+    "scenario": "narrow",
+    "coverage": 0.9991355927151332,
+    "max_gap_s": 0.021000000000000796,
+    "age_s": 0.015999999999998238,
+    "geometries": 4,
+    "raw_recomputation_matches": true,
+    "evidence": "ros2-demo-005/reference/narrow/contact-telemetry.json"
+  },
+  {
+    "source": "generated",
+    "scenario": "healthy",
+    "coverage": 0.9987669543773119,
+    "max_gap_s": 0.020000000000003126,
+    "age_s": 0.019999999999999574,
+    "geometries": 4,
+    "raw_recomputation_matches": true,
+    "evidence": "ros2-demo-005/generated/healthy/contact-telemetry.json"
+  },
+  {
+    "source": "generated",
+    "scenario": "temporary-block",
+    "coverage": 0.9959011393856589,
+    "max_gap_s": 0.17999999999999972,
+    "age_s": 0.0,
+    "geometries": 4,
+    "raw_recomputation_matches": true,
+    "evidence": "ros2-demo-005/generated/temporary-block/contact-telemetry.json"
+  },
+  {
+    "source": "generated",
+    "scenario": "unreachable",
+    "coverage": 0.998832395711708,
+    "max_gap_s": 0.021000000000000796,
+    "age_s": 0.010000000000001563,
+    "geometries": 4,
+    "raw_recomputation_matches": true,
+    "evidence": "ros2-demo-005/generated/unreachable/contact-telemetry.json"
+  },
+  {
+    "source": "generated",
+    "scenario": "narrow",
+    "coverage": 0.9996827319661965,
+    "max_gap_s": 0.021000000000000796,
+    "age_s": 0.0,
+    "geometries": 4,
+    "raw_recomputation_matches": true,
+    "evidence": "ros2-demo-005/generated/narrow/contact-telemetry.json"
+  }
+]

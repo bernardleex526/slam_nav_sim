@@ -1,230 +1,116 @@
-# SLAM / Navigation Simulation Benchmark
+# SLAM／导航验证插件
 
-面向 **Ubuntu 22.04 / WSL2、ROS 2 Humble、Gazebo Classic 11** 的机器人建图与导航仿真评测平台。
+按 `slam-navigation-validation-plan.md` 第 1、2 步实现的首版工具。本次依照后续确认，交付 **工具、本地验证和 ROS 2 部署包**。它是可安装的 Python／pytest 插件，命令为 `robot-validate`；未注册到 Codex 插件市场。
 
-当前 `main` 是本次平台的完整源码快照，已替换之前的 SW01/FAST-LIO 工程。**本版本实际验证的是 SLAM Toolbox + AMCL + Nav2，不是 FAST-LIO2 实装版本。**
+**v0.1.3 已修复原临时阻挡恢复两项失败。** 锁定原 `ros2-demo-005` 生成地图，与参考地图的 8 个导航场景全部通过原门槛；实际受阻、移除、恢复及穿闸有独立时序证据。本轮是历史地图导航回归，未重新建图；另一次 fresh SLAM 退化仍保留失败。详见 [修复记录](docs/BLOCK_RECOVERY_FIX.md) 和 [图形汇总](results/block-recovery-index.html)。
 
-> **定位：可复现的仿真评测平台，不是生产级自主导航方案。**
-> 三环境建图、8 组 / 40 次导航尝试和 33 项回归已有实测记录，但导航并非全部成功。complex 窄迷宫没有完整覆盖；medium 默认导航配置成功率较低。工作范围验收通过，不代表全环境覆盖、真实足式动力学或所有算法能力已经完成。
+最新完成度检查见 [PLUGIN_COMPLETION_AUDIT.md](PLUGIN_COMPLETION_AUDIT.md)。仓库包含源码、固定地图及文档直接链接的验收证据；本机 VM、缓存、编译目录和未链接的运行日志保留在本地。
 
-![medium 未裁剪地图与真值轨迹对比](docs/validation/medium_mapping.png)
+## 已交付
 
-## 现在能做到什么
+- ROS 1／ROS 2 SQLite bag 读取、公开激光日志转换、传感器自身的点到线配准＋BreezySLAM 地图积分、PGM＋YAML 地图、TUM 轨迹；旧 RMHC 匹配器保留为对照。
+- evo ATE／RPE、独立参考与双向配对覆盖检查、禁止尺度修正；地图覆盖、墙体双向距离与误判空闲比例。
+- 逐阶段日志、独立结果目录、校验值、可追溯配置、超时／中断清理；只管理本轮启动的进程组。
+- 单份离线 HTML（内嵌图片）、JSON、严格 JUnit XML；pytest 可运行同一用例契约。
+- Ubuntu 24.04／ROS 2 Jazzy／Gazebo Harmonic Dockerfile，固定世界，SLAM Toolbox、Nav2、传感器适配和连续接触监测插件源码。
+- ROS 仿真编排：建图导出 → 重新启动同世界 → 参考地图导航 → 本轮生成地图导航。加载地图时比较实际 `/map` 内容、分辨率和原点，并记录两次地图哈希。
 
-| 能力 | 当前状态 |
-|---|---|
-| 模型加载 | 通用轮足 `wheeled_quadruped`、足式 `quadruped`、宇树开源 `go2w`、独立通用 `agv` |
-| 仿真环境 | `simple`、`medium`、`complex`，包含 GT 栅格；后两者有实际运动的动态障碍 |
-| 传感器 | 3D LiDAR、IMU、RGB-D；点云转 LaserScan；点云多稀疏度输出 |
-| 阶段 A | SLAM Toolbox 建图、GT 辅助确定性安全覆盖路径、绕墙连接、存图、地图评分与选图 |
-| 阶段 B | 冻结地图、AMCL 定位、固定目标序列；NavFn / SMAC 2D / SMAC Hybrid 与 DWB / MPPI / RPP 组合评测 |
-| 指标 | 目标状态、覆盖率、容差精确率、场外占据比例、ATE/RPE、跟踪误差、接触事件、控制平滑度、路径效率 |
-| 结果可信度 | 真实消息就绪检测、失败停止、超时取消、原子落盘、最终目标刷新确认、全量汇总、冻结地图哈希 |
-| 可视化 | Gazebo / RViz，以及离线地图、轨迹、指标图表 |
+## 在本机安装与试用
 
-机器人由理想平面运动插件驱动，腿和轮在评测模式下固定，不仿真实际步态或轮电机动力学。四类模型均有实际加载与运动约束证据，AGV、足式、Go2W 另有导航目标验收。
-
-## 已知缺陷与边界
-
-1. **complex 全图未建全。** 本次全 GT 自由空间覆盖率为 69.89%，左侧窄迷宫不在声明的保守可原地转向工作区中。工作区覆盖 100% 不等于全图覆盖 100%，也不是严格 SE(2) 不可达性证明。
-2. **medium 导航不可靠。** 两组默认组合均仅 1/5 成功，有门洞附近超时、规划/恢复失败和持续接触，不能作为生产部署参数。
-3. **复杂环境仍有 SLAM 偏移。** complex 原始 ATE 约 0.512m、最大瞬时误差约 2.2m，不能宣传全程厘米级精度。
-4. **MPPI 并不保证更好。** 本次 simple 为 2/5、complex 为 3/5；日志出现起点进入致命代价区及恢复失败。尚未通过控制变量实验拆分定位、footprint、动态障碍和控制器参数的各自影响。
-5. **没有 M20 Pro 原厂模型。** 没有用猜测尺寸的模型冒充原厂 URDF。AGV 是通用自建模型，不代表认证车辆。
-6. **没有实装验证 FAST-LIO / LIO-SAM / RTAB-Map。** 这些只保留适配入口，缺包会明确报错。Livox/MID360 插件也不是默认依赖。
-7. **不是自主探索。** 阶段 A 路径使用 GT 地图进行受控覆盖测试；默认里程计来自 Gazebo 真值，不能把本次 ATE 当成独立 LIO 性能。
-8. **统计范围有限。** 每组一个 repeat、五个连续目标；较早失败会改变后续实际起点。平均尝试耗时包含失败，不能把“失败更快”解释为导航更优，也不能跨世界直接排名。
-9. **部分历史工具危险。** `clean_sim.sh`、`cleanup_sim.sh`、旧 `check_*` / `quick_*` shell 工具含全局进程清理，仅供阅读后单独调试。不要在其他 ROS/Gazebo 实验运行时执行。推荐下文的 `review_*` 工具和正式 runner。
-10. **技术栈较旧。** Gazebo Classic 已停止维护；本仓库针对 Humble / Classic 11，未验证迁移到新版 Gazebo 或 ROS 2 Jazzy。
-
-## 实测结果（2026-09-11）
-
-阶段 A 未使用轨迹包围盒裁剪：
-
-| 世界 | 路点完成 | 全 GT 自由空间覆盖 | 声明工作区覆盖 | 10cm 容差精确率 | 场外占据比例 | 原始 / 对齐 ATE |
-|---|---:|---:|---:|---:|---:|---:|
-| simple | 95/95 | 100% | 100% | 96.81% | 0% | 0.0645 / 0.0114m |
-| medium | 242/242 | 100% | 100% | 71.84% | 3.44% | 0.1371 / 0.0221m |
-| complex | 65/65 | 69.89% | 100% | 70.45% | 0% | 0.5118 / 0.4922m |
-
-正式导航 40 次尝试：**27 成功、11 ABORTED、2 TIMEOUT**。全部成功目标的实际 GT 位置误差不超过 0.396m。
-
-| 世界 | 全局规划器 + 控制器 | 成功/尝试 | 平均尝试耗时（仿真秒） | 持续接触次数 |
-|---|---|---:|---:|---:|
-| simple | SMAC 2D + DWB | 5/5 | 15.04 | 0 |
-| simple | NavFn + DWB | 5/5 | 14.92 | 0 |
-| simple | SMAC Hybrid + MPPI | 2/5 | 22.20 | 0 |
-| simple | SMAC 2D + RPP | 5/5 | 9.28 | 0 |
-| medium | SMAC 2D + DWB | 1/5 | 107.82 | 4 |
-| medium | SMAC Hybrid + MPPI | 1/5 | 40.72 | 3 |
-| complex | SMAC 2D + DWB | 5/5 | 23.18 | 0 |
-| complex | SMAC Hybrid + MPPI | 3/5 | 23.56 | 2 |
-
-持续接触按 Gazebo 接触事件去抖，排除地面和自身接触，不等同于每一个瞬时接触点。RPP 在本次 simple 任务更快，但没有本次 medium/complex 的 RPP 对照，不能外推。
-
-验证摘要、地图和图表见 [docs/validation](docs/validation/README.md)。这些是历史实测材料，不会伪装成新克隆工作区的本次运行结果。
-
-## 安装与构建
-
-### 1. 环境
-
-- Ubuntu 22.04，或启用 WSL2 的 Ubuntu 22.04；GUI 需要 WSLg / 可用显示服务。
-- 已安装 [ROS 2 Humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)。
-- 使用系统 Python 3.10；建议把仓库放在 WSL Linux 文件系统，不要混用 Conda 的 Python/CMake。
-- 运行中推荐 Cyclone DDS；本机 Fast DDS 曾出现生命周期服务响应丢失。
-
-### 2. 克隆、安装依赖、构建
-
-以下命令在 Ubuntu / WSL bash 执行；仓库根目录本身就是 colcon 工作空间，无需额外创建 `sim_ws` 子目录。
+Python 3.9–3.12，需本地 C 编译器（macOS 的 Xcode Command Line Tools 或 Linux build-essential）。第三方 BreezySLAM 源码和公开日志已随附，Python 依赖安装需要网络。
 
 ```bash
-git clone https://github.com/bernardleex526/slam_nav_sim.git
-cd slam_nav_sim
-bash install_deps.sh
-bash build.sh
-source install/setup.bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+cd robot-validation-plugin
+./scripts/bootstrap.sh
+
+# 公开真实激光日志 → ROS 1 bag → 局部配准＋BreezySLAM 地图 → 报告。
+# 预期退出 2：该公开日志没有独立真值，不能宣布精度通过。
+.venv/bin/robot-validate bag --scenario public --output results/public --open
+
+# 本地射线仿真建图；不运行 Gazebo／Nav2。
+# 预期退出 0：本地建图通过；导航／系统集成模块仍显示证据不足。
+.venv/bin/robot-validate sim --backend local --scenario demo --output results/local --open
+
+# 扫描断流故障，预期退出 1，报告保留约 8.1 秒缺口。
+.venv/bin/robot-validate sim --backend local --fault scan-gap --output results/gap
+
+# 可重现的旧匹配器失败对照（仍采用相同验收门槛）。
+.venv/bin/robot-validate sim --backend local --config configs/local-rmhc.yaml --output results/legacy
+
+# 工具代码和验收规则测试；这些测试通过不代表被测算法全部通过。
+.venv/bin/python -m pytest -q --junitxml=results/tool-tests.xml
+
+# 重跑全部本地对照并生成汇总 HTML；输出目录必须为空。
+.venv/bin/python scripts/local_regression.py --output results/new-run
 ```
 
-`install_deps.sh` 使用 sudo 安装核心 apt 依赖，不安装 ROS 软件源、不修改镜像或 shell profile，也不安装未验证的可选建图算法。已有依赖时无需重复执行。`build.sh --clean` 会删除本工作空间的 build/install/log，谨慎使用。
+每次 `--output` 必须为空或不存在，防止把旧地图和新结果混在一起。省略时自动创建带时间戳的目录。可选故障：`scan-gap`、`odometry-bias`、`map-export`、`no-truth`。`--generated-map` 仅用于 ROS 2 的 `--navigation-only`，接受 trinary 8 位灰度 PGM；复制地图并记录来源哈希，不把历史建图标为本轮已执行。
 
-新终端均需：
+退出码：`0` 已请求的必测项通过，`1` 验收失败，`2` 必测证据不足，`3` 环境错误，`124` 超时，`130` 用户中断。报告的三个模块分别判定；未执行模块保持“证据不足”。
+
+## 在 Linux 部署 ROS 2 仿真
+
+本机已使用隔离的 Ubuntu 24.04 arm64 VM 完成安装、C++ 接触插件编译、真实接触验证和闭环导航。Docker 镜像仍未构建；实际验证的是原生 Linux 部署路径。已有 VM 的入口如下，详细配置见 [本机环境](docs/ROS_VM_ENVIRONMENT.md)：
 
 ```bash
-cd /path/to/slam_nav_sim
-set +u
-source /opt/ros/humble/setup.bash
-source install/setup.bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+./deploy/vm-run.sh doctor
+# 固定原生成地图，复跑此次修复的两图导航对照。
+./deploy/vm-run.sh sim --navigation-only --scenario demo \
+  --generated-map results/ros2-demo-005/map.yaml \
+  --output /mnt/robot-validation/results/block-recovery-new --timeout 1800
+
+# 重新建图并导航：质量仍按原阈值独立判定，可能暴露建图波动。
+./deploy/vm-run.sh sim --scenario demo --config configs/demo.yaml \
+  --output /mnt/robot-validation/results/ros2-demo-new --timeout 3600
 ```
 
-ROS setup 脚本可能读取尚未定义的变量，不要在 `set -u` 下直接 source。
+在独立 Ubuntu 24.04 主机，可先执行 `bash deploy/setup-ubuntu.sh`，再用 `deploy/native-run.sh` 运行。
 
-## 使用方法
-
-### 加载模型和世界
+在已有 Docker 的 Linux／Linux VM 中，从插件根目录运行：
 
 ```bash
-ros2 launch sim_bringup sim.launch.py \
-  robot:=agv world:=simple mapping:=none navigation:=none \
-  use_gimbal:=false headless:=true viz:=false
+# 首次会构建环境，之后复用缓存；结果写入 results/docker/。
+./deploy/run.sh
+
+# 独立导航：不依赖 SLAM／地图导出成功。
+./deploy/run.sh sim --navigation-only --scenario demo --output /results/nav-only
+
+# 先用单个短场景验证环境，再跑完整矩阵。
+./deploy/run.sh sim --scenario healthy --output /results/healthy
+
+# 公开日志经 rosbag2 时钟回放，再运行 SLAM Toolbox。
+./deploy/run.sh bag --backend ros2 --scenario public --output /results/public-ros2
+
+# 回环关闭对照：配置开关有记录，候选／拒绝／接受事件仍需专门适配。
+./deploy/run.sh sim --config /opt/robot-validation/configs/loop-off.yaml --output /results/loop-off
 ```
 
-`robot` 可换为 `wheeled_quadruped`、`quadruped`、`go2w`；`world` 可换为 `medium`、`complex`。查看 Gazebo / RViz 时使用 `headless:=false viz:=true`。Ctrl+C 结束当前 launch。
+容器采用无界面软件渲染，世界不依赖在线 Fuel 模型。默认完整 `demo` 含正常到达、临时阻挡移除、不可达目标和窄通道路线；每种场景重启同一世界，保持种子、初始位姿和导航参数一致。`narrow` 使用固定途经点并核对独立实际轨迹确实穿过 0.8 米通道，避免绕行到达被当作通道验收。
 
-### 使用仓库示例地图导航
+接触插件遍历机器人全部碰撞体，在每个物理步收集接触，以 50 Hz 发布包含空帧的观测。验收要求监测到四个碰撞体、全程覆盖率至少 95%、最大观测间隔和末帧年龄均不超过 0.5 秒。原生 Gazebo 接触话题只在有接触时发布，因此不能直接据“零消息”判无碰撞。
 
-先停止上一套仿真。在仓库根目录启动轮足机器人和 AMCL/Nav2：
+Linux 已执行与待执行项目在 [部署检查单](docs/ROS_ACCEPTANCE.md)。若已在 Ubuntu 安装 ROS 2，可构建 `deploy/contact_monitor` 后设置 `GZ_SIM_SYSTEM_PLUGIN_PATH`，再运行原生命令 `robot-validate sim --scenario demo --open`。
+
+## pytest 批跑与自己的算法
 
 ```bash
-ros2 launch sim_bringup sim.launch.py \
-  robot:=wheeled_quadruped world:=simple \
-  mapping:=none navigation:=nav2 localization:=amcl \
-  map:="$PWD/docs/validation/maps/simple/map.yaml" \
-  global_planner:=smac_2d local_planner:=dwb \
-  use_gimbal:=false headless:=true viz:=false metrics:=true \
-  run_name:=manual_simple
+.venv/bin/python -m pytest -q --robot-case configs/public.case.json --junitxml=results/pytest-batch.xml
 ```
 
-新终端加载同一环境，待导航生命周期激活后发送目标：
+用例 JSON 声明运行请求、结果目录、期望退出码和关键判据。故障测试需要明确预期失败，不能默认把所有非零退出当成功。[接口约定](docs/ADAPTERS.md) 说明传感器、参考来源和坐标系要求。
 
-```bash
-ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \
-  '{pose: {header: {frame_id: map}, pose: {position: {x: 0.35, y: -6.25, z: 0.0}, orientation: {w: 1.0}}}}'
-```
+ROS 算法可通过 `configs/custom-algorithm.example.yaml` 的 `algorithm.launch_argv` 接入。算法须使用 `/scan`、`odom→base_link`，发布 `/map` 和 `map→base_link` 变换；所有节点使用仿真时钟。当前录包适配器只覆盖 `LaserScan + TwistStamped` 轮速输入，其他话题／消息类型需要小型适配器，不能直接假定兼容。
 
-示例地图仅用于快速体验，不证明你这次运行已完成阶段 A。手动运行指标默认在 `~/.ros/sim_eval/manual_simple`。
+## 结果解读
 
-### 阶段 A：生成自己的地图
+当前随附 `results/` 包含 macOS 本地建图证据和本机 Ubuntu VM 的 ROS 实跑证据；旧结果保留在 `results/history/v0.1.0/`。`results/index.html` 保留本地报告，`results/ros2-index.html` 为新的真实 ROS 导航汇总。原射线基线仍含 4% 轮速比例偏差和持续转角偏差。v0.1.1 只修改算法适配，未去掉这些噪声／偏差，也没有把真值或参考地图送入算法。精确前后指标在 `results/comparison.json` 和汇总 HTML 中列出。
 
-```bash
-python3 -u src/sim_benchmark/scripts/stage_a_runner.py \
-  --config src/sim_benchmark/config/delivery_stage_a.yaml
-```
+默认本地位姿估计已从纯 RMHC 改为本项目实现的点到线局部配准；BreezySLAM 仍负责栅格积分。定位器只利用原始扫描、轮速先验和历史估计构成的子地图，使用相同的边缘束排除配置。原生三射线扩展改为每个观测束一条射线，修正概率／灰度换算及半格原点。没有扩大墙体宽度、缩小评分区域或拟合地图到参考图。
 
-单世界可追加 `--only simple` / `--only medium` / `--only complex`。正式配置固定轮足模型、0.5m/s、1.2m 扫描间距、关闭云台、保存未裁剪地图。结果在 `~/.ros/sim_delivery_stage_a`。
+三倍轮速偏置现在能被激光匹配纠正，输出可通过原门槛；这不代表故障输入消失。断流和导出失败仍非零退出，缺真值仍不能验收 ATE。NaN、负无穷和越界读数不会生成空闲空间；只有明确的正无穷无返回值可以形成清空射线。
 
-```bash
-python3 tools/resummarize_stage_a.py \
-  --config src/sim_benchmark/config/delivery_stage_a.yaml
-```
+新本地配准入口只接受 `time_increment=0` 的瞬时或已去畸变扫描；有束间时间的扫描须预先去畸变或使用 ROS 后端。没有把原本未知的公开日志采样时序当作已校准数据。
 
-汇总生成 `stage_a_selected.yaml`、`stage_a_summary.csv`、`stage_a_results.json`；超时、跳点或中断不算完成。再次运行同名实验会归档已有产物，不会把旧地图当作新结果。
+默认门槛是示例门槛，尚未由业务误差容忍度或盲测锁定。不能将工具单元测试通过、轨迹通过、地图通过、导航通过视为同一件事。
 
-### 阶段 B：8 组导航横比
-
-阶段 A 必须已生成三个世界的有效选择结果：
-
-```bash
-python3 -u src/sim_benchmark/scripts/stage_b_runner.py \
-  --config src/sim_benchmark/config/delivery_stage_b.yaml
-```
-
-可追加 `--only simple` 等过滤世界；`--dry-run` 只查看计划。每组 5 个连续目标、单目标 150 秒上限、固定 seed、同世界冻结地图。结果在 `~/.ros/sim_delivery_stage_b`，包含目标状态、metrics、轨迹、日志及地图副本。
-
-### 从头运行完整评测并验收
-
-```bash
-bash tools/run_delivery.sh
-python3 tools/verify_delivery.py
-python3 tools/build_delivery_report.py --output "$PWD/outputs/latest"
-```
-
-完整矩阵可能超过一小时，不是单元测试。脚本默认使用独立 ROS 域 96 / Gazebo 端口 11396；不要同时在同域或端口启动其他仿真。手动并行时须同时隔离 `ROS_DOMAIN_ID`、`GAZEBO_MASTER_URI`，且不得并发写入同名实验目录。
-
-验收分别输出：
-
-- `passed`：声明安全工作区内，地图、40 次尝试、指标、冻结地图/目标一致性与成功目标 GT 误差满足门槛。
-- `full_environment_coverage_passed`：三环境全 GT 自由空间覆盖是否都达到 85%。本次为 **false**。
-
-地图门槛为工作区覆盖至少 95%、10cm 容差精确率至少 70%、场外占据比例小于 30%；成功目标 GT 误差不超过 0.5m。定义见 [DELIVERY_SCOPE.md](DELIVERY_SCOPE.md)。**平台验收不要求每种算法所有目标成功，但必须如实保存失败。**
-
-## 测试
-
-已构建并 source 当前工作空间后：
-
-```bash
-python3 -m unittest discover -s tools -p 'test_*.py'
-```
-
-无 Gazebo 的自动回归历史结果为 33 项通过。额外的实机仿真接口检查需单独运行，不能与同域仿真并行：
-
-```bash
-python3 tools/review_planar_smoke.py --robot go2w
-python3 tools/review_contact_smoke.py
-python3 tools/review_dynamic_smoke.py
-python3 tools/review_mapping_smoke.py
-```
-
-`review_mapping_smoke.py` 约 45 秒探索后主动结束，只验证建图/存图/评测链路，其 `EXPLORATION_INCOMPLETE` 是预期状态，不能当正式全图验收。`review_robot_navigation.py` 依赖你自己的阶段 A simple 选择结果。
-
-## 目录结构
-
-```text
-src/
-  robot_descriptions/   # 四类模型、传感器、平面约束/接触插件
-  go2w_description/     # Unitree 开源资产与 BSD 许可证
-  sim_worlds/          # 三世界、GT 地图、动态障碍驱动
-  mapping_adapters/    # SLAM 与点云/扫描适配
-  nav2_config/         # 参数合成、规划器与控制器配置
-  sim_bringup/         # 统一 launch
-  sim_benchmark/       # 阶段 A/B runner 和实验矩阵
-  sim_metrics/         # 在线采集与离线评估
-  sim_viz/             # RViz 配置
-  robot_interface_spec/# 接口约定
-tools/                 # 回归、验收、诊断和报告工具
-docs/validation/       # 本次精简实测材料及示例地图
-```
-
-## 常见问题
-
-- **没有 `/scan`、`/map` 或 AMCL TF**：先检查完整 launch 日志中的 ERROR / FATAL，不要只看末尾；确认所有终端的 ROS 域、DDS 实现一致。
-- **服务调用超时**：使用 `rmw_cyclonedds_cpp`，停止当前自己启动的进程后重新启动；不要靠等待固定秒数就宣称 ready。
-- **Go2W 网格不可见**：确认已构建/source 本工作空间；启动入口会设置已安装包的网格搜索路径。
-- **混入旧节点**：检查 `ps` 和正在使用的域/端口，只结束本次实验进程。不要盲目执行全局 `pkill` 工具。
-- **地图评分低但形状看似接近**：GT 为实心障碍，激光图通常是表面线；同时看容差精确率、轨迹误差和未裁剪图，不要仅用裸 recall，也不要断言差距全由墙厚造成。
-- **Nav2 goal ABORTED/TIMEOUT**：这是待分析结果；查看代价地图、GT 终点误差、接触记录、恢复日志，不能与基础设施启动失败混为一谈。
-
-## 许可证
-
-平台自有 ROS 包沿用其 `package.xml` 声明的 [Apache-2.0](LICENSE)。Go2W 原始描述资产属于 Unitree，遵循其 [BSD-3-Clause](src/go2w_description/LICENSE)。详见 [第三方声明](THIRD_PARTY_NOTICES.md)。
+第三方来源和许可证见 [THIRD_PARTY.md](THIRD_PARTY.md)。

@@ -1,0 +1,101 @@
+{
+  "scenario": "demo",
+  "backend": "local",
+  "seed": 9999,
+  "checks": [
+    {
+      "id": "MAP_EXPORT_ERROR",
+      "section": "mapping",
+      "status": "fail",
+      "value": null,
+      "threshold": null,
+      "reason": "RuntimeError: Injected map export failure after SLAM; partial trajectory retained",
+      "window_s": [
+        0.486182542
+      ],
+      "evidence": [
+        "failure.log"
+      ],
+      "required": true
+    }
+  ],
+  "provenance": {
+    "started_utc": "2026-11-16T02:55:45.072482+00:00",
+    "platform": "macOS-26.7.3-arm64-arm-64bit",
+    "python": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+    "config": {
+      "thresholds": {
+        "max_scan_gap_s": 0.5,
+        "min_known_cells": 100,
+        "ate_rmse_m": 0.75,
+        "min_pair_coverage": 0.95,
+        "max_pair_dt_s": 0.03,
+        "map_coverage": 0.7,
+        "false_free_rate": 0.1,
+        "wall_p95_m": 0.5,
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02
+      },
+      "seed": 9999,
+      "algorithm": {
+        "local_matcher": "point_to_line"
+      }
+    },
+    "fault": "map-export",
+    "software": {
+      "numpy": "1.26.4",
+      "rosbags": "0.9.23",
+      "evo": "1.30.0",
+      "pytest": "8.3.5"
+    },
+    "dataset": {
+      "name": "deterministic 2D raycast",
+      "generator_seed": 391,
+      "truth_source": "independent geometric raycast simulator",
+      "independent_truth": true,
+      "scope": "建图工具本地回归；不是 Gazebo/Nav2 闭环验证"
+    },
+    "input_sha256": "f76e2220228ad0a802b6d818a73ebc499e290b371d71365ec45135b9d2978f31",
+    "input_bag": "/Users/bernardlee/Documents/Codex/2026-11-16/an/outputs/robot-validation-plugin/results/map-export/input.bag",
+    "local_algorithm": {
+      "pose_estimator": "point_to_line",
+      "map_engine": "BreezySLAM CoreSLAM",
+      "reference_inputs": false
+    }
+  },
+  "stages": [
+    {
+      "name": "input_preflight",
+      "status": "completed",
+      "elapsed_s": 0.07689554099999996,
+      "start_wall_s": 0.01368674999999997
+    },
+    {
+      "name": "mapping",
+      "status": "completed",
+      "elapsed_s": 0.39379125000000004,
+      "start_wall_s": 0.091026
+    },
+    {
+      "name": "map_export",
+      "status": "failed",
+      "elapsed_s": 1.792000000055971e-06,
+      "start_wall_s": 0.4851845
+    }
+  ],
+  "artifacts": {
+    "mapping_diagnostics": "mapping-diagnostics.json",
+    "trajectory": "estimated.tum"
+  },
+  "metrics": {},
+  "process_exit_code": null,
+  "schema_version": 1,
+  "status": "fail",
+  "exit_code": 1,
+  "sections": {
+    "mapping": "fail",
+    "navigation": "insufficient",
+    "integration": "insufficient"
+  }
+}

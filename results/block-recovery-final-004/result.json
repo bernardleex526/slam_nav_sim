@@ -1,0 +1,411 @@
+{
+  "scenario": "demo",
+  "backend": "ros2",
+  "seed": 9999,
+  "checks": [
+    {
+      "id": "MAPPING_NOT_REQUESTED",
+      "section": "mapping",
+      "status": "insufficient",
+      "value": null,
+      "threshold": null,
+      "reason": "本轮仅导航；不重新执行或重新判定历史建图",
+      "window_s": [],
+      "evidence": [],
+      "required": false
+    },
+    {
+      "id": "REFERENCE_HEALTHY",
+      "section": "navigation",
+      "status": "pass",
+      "value": {
+        "position_m": 0.12744583947467217,
+        "yaw_rad": 0.057295118579684196,
+        "contacts": 0,
+        "action_status": "succeeded",
+        "duration_s": 17.68,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 120
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        4.554,
+        22.234
+      ],
+      "evidence": [
+        "reference/healthy/navigation.json"
+      ],
+      "required": true
+    },
+    {
+      "id": "REFERENCE_TEMPORARY-BLOCK",
+      "section": "navigation",
+      "status": "pass",
+      "value": {
+        "position_m": 0.14293689876689214,
+        "yaw_rad": 0.002145355125944435,
+        "contacts": 0,
+        "action_status": "succeeded",
+        "duration_s": 31.172000000000004,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 120
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        5.208,
+        36.38
+      ],
+      "evidence": [
+        "reference/temporary-block/navigation.json"
+      ],
+      "required": true
+    },
+    {
+      "id": "REFERENCE_UNREACHABLE",
+      "section": "navigation",
+      "status": "pass",
+      "value": {
+        "position_m": 3.7026288695124463,
+        "yaw_rad": 2.5151041763379083,
+        "contacts": 0,
+        "action_status": "aborted",
+        "duration_s": 18.717000000000002,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 60
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        4.653,
+        23.37
+      ],
+      "evidence": [
+        "reference/unreachable/navigation.json"
+      ],
+      "required": true
+    },
+    {
+      "id": "REFERENCE_NARROW",
+      "section": "navigation",
+      "status": "pass",
+      "value": {
+        "position_m": 0.23231498702533174,
+        "yaw_rad": 0.052568746623504296,
+        "contacts": 0,
+        "action_status": "succeeded",
+        "duration_s": 33.976,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 120
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        6.613,
+        40.589
+      ],
+      "evidence": [
+        "reference/narrow/navigation.json"
+      ],
+      "required": true
+    },
+    {
+      "id": "REFERENCE_NARROW_COVERAGE",
+      "section": "navigation",
+      "status": "pass",
+      "value": true,
+      "threshold": true,
+      "reason": "独立实际轨迹须连续穿过两箱体之间的 0.8 米通道",
+      "window_s": [
+        6.613,
+        40.589
+      ],
+      "evidence": [
+        "reference/narrow/ground-truth-raw.tum"
+      ],
+      "required": true
+    },
+    {
+      "id": "GENERATED_HEALTHY",
+      "section": "integration",
+      "status": "pass",
+      "value": {
+        "position_m": 0.013739619348645121,
+        "yaw_rad": 0.07166749442842453,
+        "contacts": 0,
+        "action_status": "succeeded",
+        "duration_s": 17.855,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 120
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        4.805,
+        22.66
+      ],
+      "evidence": [
+        "generated/healthy/navigation.json"
+      ],
+      "required": true
+    },
+    {
+      "id": "GENERATED_TEMPORARY-BLOCK",
+      "section": "integration",
+      "status": "pass",
+      "value": {
+        "position_m": 0.040926787052911445,
+        "yaw_rad": 0.0006036382218333181,
+        "contacts": 0,
+        "action_status": "succeeded",
+        "duration_s": 23.648,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 120
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        4.508,
+        28.156
+      ],
+      "evidence": [
+        "generated/temporary-block/navigation.json"
+      ],
+      "required": true
+    },
+    {
+      "id": "GENERATED_UNREACHABLE",
+      "section": "integration",
+      "status": "pass",
+      "value": {
+        "position_m": 3.702358162527672,
+        "yaw_rad": 2.5092800399225057,
+        "contacts": 0,
+        "action_status": "aborted",
+        "duration_s": 18.919,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 60
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        4.977,
+        23.896
+      ],
+      "evidence": [
+        "generated/unreachable/navigation.json"
+      ],
+      "required": true
+    },
+    {
+      "id": "GENERATED_NARROW",
+      "section": "integration",
+      "status": "pass",
+      "value": {
+        "position_m": 0.20539851896033157,
+        "yaw_rad": 0.082601513286086,
+        "contacts": 0,
+        "action_status": "succeeded",
+        "duration_s": 36.370999999999995,
+        "final_speed": 0.0
+      },
+      "threshold": {
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02,
+        "contacts": 0,
+        "timeout_s": 120
+      },
+      "reason": "动作结果＋独立终点位姿＋接触采样",
+      "window_s": [
+        3.346,
+        39.717
+      ],
+      "evidence": [
+        "generated/narrow/navigation.json"
+      ],
+      "required": true
+    },
+    {
+      "id": "GENERATED_NARROW_COVERAGE",
+      "section": "integration",
+      "status": "pass",
+      "value": true,
+      "threshold": true,
+      "reason": "独立实际轨迹须连续穿过两箱体之间的 0.8 米通道",
+      "window_s": [
+        3.346,
+        39.717
+      ],
+      "evidence": [
+        "generated/narrow/ground-truth-raw.tum"
+      ],
+      "required": true
+    }
+  ],
+  "provenance": {
+    "started_utc": "2026-11-16T07:11:04.839923+00:00",
+    "platform": "Linux-6.8.0-147-generic-aarch64-with-glibc2.39",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "config": {
+      "name": "demo",
+      "seed": 9999,
+      "thresholds": {
+        "max_scan_gap_s": 0.5,
+        "min_known_cells": 100,
+        "ate_rmse_m": 0.75,
+        "min_pair_coverage": 0.95,
+        "max_pair_dt_s": 0.03,
+        "map_coverage": 0.7,
+        "false_free_rate": 0.1,
+        "wall_p95_m": 0.5,
+        "position_m": 0.25,
+        "yaw_rad": 0.25,
+        "stop_speed_mps": 0.02
+      },
+      "ros": {
+        "loop_closing": true,
+        "settle_s": 3,
+        "replay_timeout_s": 600
+      }
+    },
+    "fault": "none",
+    "software": {
+      "numpy": "1.26.4",
+      "rosbags": "0.9.23",
+      "evo": "1.30.0",
+      "pytest": "8.3.5"
+    },
+    "world_sha256": "c1f9f23734adfafc8181b3e0f4233fb31f20d21b604d5be110fac8c6ac362711",
+    "nav_params_sha256": "efe1813c15d214b75f00b6c38a990bcdf8300478c20dac749e9849e9bc6df818",
+    "slam_params_sha256": "17c3db9bcf9c33d354fc817958999387ddd82a517973bbc7354890d63329b74a",
+    "ROS_DISTRO": "jazzy",
+    "RMW_IMPLEMENTATION": "rmw_cyclonedds_cpp",
+    "validation_level": "executed ROS 2 / Gazebo; see individual checks",
+    "isolation": {
+      "ROS_DOMAIN_ID": "40",
+      "ROS_LOCALHOST_ONLY": "1",
+      "GZ_PARTITION": "validation-298e7bea8b1a42e49c9a346872bc184c"
+    },
+    "reused_map": {
+      "source_yaml": "/mnt/robot-validation/results/ros2-demo-005/map.yaml",
+      "source_yaml_sha256": "97e57d9ad6d2ff9399c6cabc1ae32cfbe8d6437b4c7e56c2431b85c06a5cc688",
+      "source_image_sha256": "ac287241f03a8dfd04ec2b5b98c8b6584fa2539bcd42c417ad72924b2d37fbd8",
+      "copied_image_sha256": "ac287241f03a8dfd04ec2b5b98c8b6584fa2539bcd42c417ad72924b2d37fbd8",
+      "geometry_and_cells_identical": true,
+      "mapping_executed_this_run": false
+    },
+    "map_sha256": "ac287241f03a8dfd04ec2b5b98c8b6584fa2539bcd42c417ad72924b2d37fbd8"
+  },
+  "stages": [
+    {
+      "name": "environment_preflight",
+      "status": "completed",
+      "elapsed_s": 0.25519470800009003,
+      "start_wall_s": 0.010112041999946086
+    },
+    {
+      "name": "reuse_generated_map",
+      "status": "completed",
+      "elapsed_s": 0.06560129099989354,
+      "start_wall_s": 0.27471187499986627
+    },
+    {
+      "name": "navigation_reference_healthy",
+      "status": "completed",
+      "elapsed_s": 25.93814505299997,
+      "start_wall_s": 0.3416364170002453
+    },
+    {
+      "name": "navigation_reference_temporary-block",
+      "status": "completed",
+      "elapsed_s": 40.27644647699981,
+      "start_wall_s": 26.281437095
+    },
+    {
+      "name": "navigation_reference_unreachable",
+      "status": "completed",
+      "elapsed_s": 27.106629053000233,
+      "start_wall_s": 66.55969261300015
+    },
+    {
+      "name": "navigation_reference_narrow",
+      "status": "completed",
+      "elapsed_s": 44.36883018499975,
+      "start_wall_s": 93.66901787400002
+    },
+    {
+      "name": "navigation_generated_healthy",
+      "status": "completed",
+      "elapsed_s": 26.414330718999736,
+      "start_wall_s": 138.04037089300027
+    },
+    {
+      "name": "navigation_generated_temporary-block",
+      "status": "completed",
+      "elapsed_s": 32.05741718099989,
+      "start_wall_s": 164.457476863
+    },
+    {
+      "name": "navigation_generated_unreachable",
+      "status": "completed",
+      "elapsed_s": 27.592446096000003,
+      "start_wall_s": 196.51794679400018
+    },
+    {
+      "name": "navigation_generated_narrow",
+      "status": "completed",
+      "elapsed_s": 43.51374776900002,
+      "start_wall_s": 224.11288839000008
+    }
+  ],
+  "artifacts": {
+    "map": "map.yaml"
+  },
+  "metrics": {},
+  "process_exit_code": null,
+  "schema_version": 1,
+  "status": "pass",
+  "exit_code": 0,
+  "sections": {
+    "mapping": "insufficient",
+    "navigation": "pass",
+    "integration": "pass"
+  }
+}

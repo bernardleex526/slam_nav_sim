@@ -1,0 +1,12 @@
+Process 29429: /opt/validation-venv/bin/python3 -m robot_validate.worker /mnt/robot-validation/results/ros2-demo-003/request.json /mnt/robot-validation/results/ros2-demo-003
+Python v3.12.3 (/usr/bin/python3.12)
+
+Thread 29429 (idle): "MainThread"
+    Node.__init__ (rclpy/node.py:188)
+    Probe.__init__ (robot_validate/ros_probe.py:40)
+    run_ros_sim (robot_validate/ros_backend.py:329)
+    run_ros (robot_validate/ros_backend.py:128)
+    worker (robot_validate/runner.py:235)
+    <module> (robot_validate/worker.py:6)
+    _run_code (<frozen runpy>:88)
+    _run_module_as_main (<frozen runpy>:198)
